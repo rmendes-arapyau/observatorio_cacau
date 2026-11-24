@@ -1,0 +1,35 @@
+/* Observatório do Cacau — tokens de cor, tipo e espaço usados pela página (tema claro e escuro). */
+:root {
+  color-scheme: light;
+  --color-bg: #E3F1EB; --color-panel: #F4FAF7; --color-fg: #2E251F; --color-fg-muted: #5C5249;
+  --color-border-line: #B7CBBE; --color-ok: #3F6B3A; --color-warn: #9A5A1E; --color-bad: #A3362A;
+  --obs-c0: #B5652B; --obs-c1: #B08A2E; --obs-c2: #4F7A43; --obs-c3: #856133;
+  --obs-c4: #2E251F; --obs-c5: #7F8A5C; --obs-c6: #CF8449; --obs-c7: #5F8291;
+  --cds-chart-muted: #A8B3AC; --cds-chart-grid: #D5E2DA; --cds-chart-axis: #8C988F; --cds-chart-reference: #5C5249;
+  --cds-text-secondary: #5C5249; --cds-surface-popover: #FFFFFF; --cds-border: #B7CBBE; --cds-shadow-popover: 0 4px 16px rgba(46, 37, 31, .18);
+  --font-anthropic-sans: 'Lexend Deca', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-anthropic-serif: 'Lexend Deca', system-ui, sans-serif;
+  --cds-font-size-caption: 12px; --cds-font-size-body: 14px; --cds-font-size-heading: 16px;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 12px; --cds-gap-lg: 24px;
+  --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px; --cds-pad-xl: 32px;
+  --cds-radius: 0px; --cds-dur-slow: 240ms; --cds-ease-out: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-bg: #1C2120; --color-panel: #252B29; --color-fg: #EEF3EF; --color-fg-muted: #AEB8B1;
+    --color-border-line: #3A4340; --color-ok: #8DBE7C; --color-warn: #E2B36A; --color-bad: #EE8A7E;
+    --obs-c0: #E09A62; --obs-c1: #E2C373; --obs-c2: #8DBE7C; --obs-c3: #C29A6A;
+    --obs-c4: #E9E2D6; --obs-c5: #B9C394; --obs-c6: #F0B184; --obs-c7: #9DBBC7;
+    --cds-chart-muted: #66716B; --cds-chart-grid: #333B38; --cds-chart-axis: #7E8A84; --cds-chart-reference: #AEB8B1;
+    --cds-text-secondary: #AEB8B1; --cds-surface-popover: #2C3330; --cds-border: #3A4340; --cds-shadow-popover: 0 4px 16px rgba(0, 0, 0, .5);
+  }
+}
+html { background: var(--color-bg); }
+body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-fg); font-size: var(--cds-font-size-body); -webkit-font-smoothing: antialiased; }
+.dash-select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-fg); padding: 4px 10px; min-height: 30px; }
+.dash-skeleton { color: transparent !important; background: linear-gradient(90deg, var(--color-border-line) 0, var(--color-panel) 50%, var(--color-border-line) 100%); background-size: 200% 100%; animation: obs-pulse 1.4s linear infinite; border-radius: 2px; }
+@keyframes obs-pulse { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
+/* Margens laterais no conteúdo, para que a faixa do topo e o rodapé ocupem a largura toda da janela. */
+body .oc-wrap, body .oc-foot-inner { box-sizing: content-box; padding-inline: clamp(16px, 3vw, 40px); }
