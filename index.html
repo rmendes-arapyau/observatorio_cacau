@@ -222,7 +222,7 @@
 .oc-table td.r, .oc-table th.r { white-space: nowrap; }
 .oc h3.oc-sub { margin: 56px 0 20px; }
 .oc-card > .oc-note { margin-top: 0; padding-top: 14px; }
-.oc-mapbox svg { display: block; }
+.oc-mapbox svg { display: block; overflow: hidden; }
 .oc-rodape > h2 { font-size: var(--cds-font-size-body) !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 700 !important; }
 </style>
 
@@ -1758,7 +1758,10 @@ dash.draw('mapa_producao', (el) => {
   gU.selectAll('path').data(ufs).join('path').attr('class', 'oc-uf').attr('d', (d) => d.d);
   if (uf !== 'BR' && isFinite(x0)) {
     const pad = Math.max(x1 - x0, y1 - y0) * 0.06;
-    svg.attr('viewBox', [x0 - pad, y0 - pad, x1 - x0 + 2 * pad, y1 - y0 + 2 * pad].join(' '));
+    let w = x1 - x0 + 2 * pad, h = y1 - y0 + 2 * pad;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, r = 1000 / 940;
+    if (w / h < r) w = h * r; else h = w / r;
+    svg.attr('viewBox', [cx - w / 2, cy - h / 2, w, h].join(' '));
   }
   const tip = OC.tooltip(el);
   let hover = null;
