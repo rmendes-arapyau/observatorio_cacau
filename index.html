@@ -1,0 +1,1867 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observatório do Cacau</title>
+<meta name="description" content="Produção, território, indústria, comércio exterior, mercado e crédito rural do cacau no Brasil.">
+<link rel="icon" href="assets/logo-obs-cacau.png">
+<link rel="stylesheet" href="css/tema.css">
+<script src="vendor/d3.v7.9.0.min.js"></script>
+<script>window.OBS_PARAMS = {"metrica": "toneladas", "uso": "pasto", "bioma": "Todos", "fluxo": "Exportação", "ano_paises": "2025", "moeda": "usd", "fgpp": "com", "metrica_mun": "toneladas", "uf_mun": "BR"};</script>
+<script src="js/runtime.js"></script>
+</head>
+<body>
+<style>
+.oc { --oc-max: 1120px; color: var(--color-fg); font-family: var(--font-anthropic-sans); }
+.oc-wrap { max-width: var(--oc-max); margin: 0 auto; }
+.oc h1, .oc h2 { font-family: var(--font-anthropic-serif); font-weight: 400; letter-spacing: -0.01em; margin: 0; }
+.oc h3 { font-size: var(--cds-font-size-heading); font-weight: 700; margin: 0 0 var(--cds-gap-xs); }
+.oc p { max-width: 72ch; line-height: 1.55; }
+.oc-muted { color: var(--color-fg-muted); }
+.oc-small { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.oc-num { font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* Abertura */
+.oc-hero { display: grid; grid-template-columns: 1fr; gap: var(--cds-gap-lg); padding: var(--cds-pad-xl) 0 var(--cds-pad-lg); align-items: end; }
+.oc-hero h1 { font-family: var(--font-anthropic-sans); font-weight: 800; letter-spacing: -0.02em; font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1.02; }
+.oc-hero .oc-lede { font-size: 1.12rem; margin: var(--cds-gap-md) 0 0; color: var(--color-fg-muted); }
+.oc-org { font-size: var(--cds-font-size-body); font-weight: 700; margin: 0 0 var(--cds-gap-sm); }
+.oc-takeaway { font-size: 1.18rem; line-height: 1.6; margin: var(--cds-gap-lg) 0 0; max-width: 64ch; }
+.oc-takeaway b { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Números de destaque */
+.oc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; border-top: 1px solid var(--color-border-line); border-bottom: 1px solid var(--color-border-line); margin: var(--cds-gap-lg) 0; }
+.oc-kpi { padding: var(--cds-pad-md) var(--cds-pad-md) var(--cds-pad-md) 0; }
+.oc-kpi + .oc-kpi { padding-left: var(--cds-pad-md); border-left: 1px solid var(--color-border-line); }
+@media (max-width: 640px) { .oc-kpi + .oc-kpi { border-left: 0; padding-left: 0; border-top: 1px solid var(--color-border-line); } }
+.oc-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
+.oc-kpi-value { font-size: 2.1rem; font-weight: 800; line-height: 1.1; margin: var(--cds-gap-xs) 0 2px; font-variant-numeric: tabular-nums; }
+.oc-kpi-value small { font-size: var(--cds-font-size-body); font-weight: 600; color: var(--color-fg-muted); margin-left: 4px; }
+.oc-kpi-delta { font-size: var(--cds-font-size-caption); margin: 0; color: var(--color-fg-muted); }
+.oc-delta { font-weight: 700; font-variant-numeric: tabular-nums; }
+.oc-good { color: var(--color-ok); } .oc-bad { color: var(--color-bad); } .oc-neutral { color: var(--color-fg); }
+
+/* Navegação */
+.oc-nav { position: sticky; top: 0; z-index: 5; background: var(--color-bg); border-bottom: 1px solid var(--color-border-line); margin: 0 0 var(--cds-gap-lg); }
+.oc-nav-inner { display: flex; gap: var(--cds-gap-xs); overflow-x: auto; padding: var(--cds-pad-sm) 0; scrollbar-width: none; }
+.oc-nav button { font: inherit; font-size: var(--cds-font-size-body); background: none; border: 0; color: var(--color-fg-muted); padding: 6px 10px; border-radius: var(--cds-radius); cursor: pointer; white-space: nowrap; }
+.oc-nav button:hover { color: var(--color-fg); background: var(--color-panel); }
+.oc-nav button.is-active { color: var(--color-fg); font-weight: 700; background: var(--color-panel); }
+.oc-nav button:focus-visible, .oc button:focus-visible, .oc select:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+/* Seções */
+.oc-section { padding: var(--cds-pad-xl) 0 var(--cds-pad-lg); scroll-margin-top: 64px; }
+.oc-section + .oc-section { border-top: 1px solid var(--color-border-line); }
+.oc-section > h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.15; }
+.oc-intro { font-size: 1.05rem; margin: var(--cds-gap-sm) 0 var(--cds-gap-lg); }
+.oc-grid { display: grid; grid-template-columns: 1fr; gap: var(--cds-gap-lg); }
+@media (min-width: 900px) { .oc-grid.two { grid-template-columns: 1fr 1fr; } .oc-grid.wide-left { grid-template-columns: 1.55fr 1fr; } }
+.oc-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.oc-card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-sm); }
+.oc-card-head p { margin: 2px 0 0; }
+.oc-controls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.oc-controls label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; flex-direction: column; gap: 2px; }
+.oc-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-sm) 0 0; }
+.oc-callout { border-left: 3px solid var(--cds-chart-reference); padding: 2px 0 2px var(--cds-pad-md); margin: var(--cds-gap-lg) 0; }
+.oc-callout p { margin: 0; }
+
+/* Gráficos */
+.oc-chart { position: relative; min-height: 260px; }
+.oc-chart.tall { min-height: 420px; }
+.oc-chart svg { display: block; overflow: visible; }
+.oc-chart .tick text, .oc-chart .oc-axis text { fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); }
+.oc-chart .tick line { stroke: var(--cds-chart-grid); }
+.oc-chart .domain { stroke: var(--cds-chart-axis); }
+.oc-chart .oc-grid-y .domain { display: none; }
+.oc-chart .oc-label { fill: var(--color-fg); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; }
+.oc-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-sm); }
+.oc-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.oc-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.oc-legend i.line { height: 3px; width: 14px; border-radius: 2px; }
+.oc-tip { position: absolute; pointer-events: none; z-index: 4; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: 8px 10px; font-size: var(--cds-font-size-caption); line-height: 1.45; min-width: 140px; max-width: 260px; }
+.oc-tip strong { display: block; margin-bottom: 2px; color: var(--color-fg); }
+.oc-tip .row { display: flex; justify-content: space-between; gap: 12px; color: var(--cds-text-secondary); }
+.oc-tip .row b { color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.oc-fail { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding: var(--cds-pad-md) 0; }
+
+/* Tabelas */
+.oc-table-wrap { overflow-x: auto; }
+.oc-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.oc-table th { text-align: left; font-weight: 600; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.oc-table td { padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+.oc-table .r { text-align: right; }
+.oc-table tr:last-child td { border-bottom: 0; }
+.oc-tag { display: inline-block; font-size: var(--cds-font-size-caption); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); white-space: nowrap; }
+.oc-tag.uso { border-color: var(--color-ok); color: var(--color-ok); }
+
+.oc-sub { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.45rem; margin: calc(var(--cds-pad-xl) * 2) 0 var(--cds-gap-md); }
+.oc-leitura { margin: 0 0 var(--cds-gap-lg); }
+.oc-manchete { font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 700; line-height: 1.3; max-width: 60ch; margin: 0 0 var(--cds-gap-lg); }
+.oc-fatores ol { list-style: none; padding: 0; margin: 0; }
+.oc-fatores li { display: grid; grid-template-columns: 12px 1fr; column-gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--color-border-line); line-height: 1.5; }
+.oc-fatores li:last-child { border-bottom: 0; }
+.oc-fatores li i { width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; }
+.oc-fatores li small { grid-column: 2; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.oc a { color: inherit; text-decoration-color: var(--color-border-line); text-underline-offset: 2px; }
+.oc a:hover { text-decoration-color: currentColor; }
+.oc-mapbox { min-height: 320px; }
+.oc-mapbox svg { width: 100%; height: auto; }
+.oc-mun { stroke: var(--color-panel); stroke-width: 0.15; vector-effect: non-scaling-stroke; }
+.oc-mun.is-hover { stroke: var(--color-fg); stroke-width: 1.5; }
+.oc-uf { fill: none; stroke: var(--color-fg); stroke-opacity: .55; stroke-width: 0.8; vector-effect: non-scaling-stroke; pointer-events: none; }
+.oc-qlegend { display: flex; flex-wrap: wrap; gap: 6px 0; margin-top: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.oc-qstep { display: grid; gap: 3px; min-width: 4.4rem; padding-right: 6px; }
+.oc-qstep i { display: block; height: 10px; border: 1px solid var(--color-border-line); }
+.oc-rodape { padding: var(--cds-pad-lg) 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.oc-rodape > h2 { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); font-weight: 700; color: var(--color-fg-muted); margin-bottom: var(--cds-gap-xs); }
+.oc-rodape p { margin: 0 0 var(--cds-gap-xs); max-width: 110ch; line-height: 1.5; }
+.oc-rodape details { margin-top: var(--cds-gap-sm); }
+.oc-rodape summary { font-weight: 600; color: var(--color-fg-muted); }
+.oc-rodape .oc-table { font-size: var(--cds-font-size-caption); margin-top: var(--cds-gap-xs); }
+.oc-soon { border: 1px dashed var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+.oc-soon p { margin: 0 0 var(--cds-gap-sm); }
+.oc details summary { cursor: pointer; font-weight: 600; }
+.oc-foot { padding: var(--cds-pad-lg) 0 var(--cds-pad-xl); }
+
+@media print {
+  .oc-nav, .oc-controls select { display: none; }
+  .oc-section { break-before: page; }
+  .oc-card { break-inside: avoid; }
+}
+
+/* ---------- Identidade visual do Observatório do Cacau ---------- */
+@font-face { font-family: 'Lexend Deca'; font-style: normal; font-weight: 100 900; font-display: swap; src: url('assets/LexendDeca.ttf') format('truetype'); }
+.oc { --obs-mint: #E3F1EB; --obs-areia: #E9D49C; --obs-terra: #CF8449; --obs-salvia: #9CBD89; --obs-tinta: #2E251F; --obs-escuro: #212524;
+  font-family: 'Lexend Deca', var(--font-anthropic-sans); overflow-x: clip; }
+.oc-bleed { margin-inline: calc(50% - 50vw); padding-inline: calc(50vw - 50%); }
+.oc-hero { position: relative; display: block; background: var(--obs-mint); padding-top: var(--cds-pad-lg); padding-bottom: var(--cds-pad-xl); text-align: center; overflow: hidden; }
+.oc-onda { position: absolute; inset: 0 0 auto 0; width: 100%; height: 100%; }
+.oc-logo { position: relative; margin: 0; padding: var(--cds-pad-lg) 0 var(--cds-pad-xl); line-height: 0; }
+.oc-logo img { width: min(520px, 82%); height: auto; }
+.oc h1, .oc h2, .oc .oc-sub { font-family: 'Lexend Deca', var(--font-anthropic-sans); }
+.oc-section > h2 { text-transform: uppercase; font-weight: 400; letter-spacing: 0.04em; font-size: clamp(1.5rem, 3.2vw, 2.1rem); }
+.oc .oc-sub { text-transform: uppercase; font-weight: 300; letter-spacing: 0.06em; font-size: 1.15rem; }
+.oc h3 { font-weight: 600; }
+.oc-takeaway { text-align: center; margin-left: auto; margin-right: auto; font-weight: 300; }
+.oc-takeaway b { font-weight: 600; }
+.oc-kpi-value { font-weight: 600; letter-spacing: -0.01em; }
+.oc-kpis { grid-template-rows: auto; }
+.oc-kpi { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; align-content: start; }
+.oc-kpi-label { align-self: end; }
+.oc-kpi-value { align-self: start; }
+.oc-card { border: 1px solid var(--color-fg); border-radius: 0; box-shadow: 5px 5px 0 var(--color-fg); }
+.oc-kpis { border-top: 1px solid var(--color-fg); border-bottom: 1px solid var(--color-fg); }
+.oc-nav { border-bottom: 1px solid var(--color-fg); }
+.oc-nav button { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; border-radius: 999px; }
+.oc-nav button.is-active { background: var(--obs-terra); color: var(--obs-tinta); box-shadow: inset 0 0 0 1px var(--obs-tinta); }
+.oc-controls select { border-radius: 999px; }
+.oc-manchete { font-weight: 500; text-transform: none; }
+.oc-foot { background: var(--obs-escuro); color: var(--obs-mint); margin-top: var(--cds-pad-xl); padding-top: var(--cds-pad-xl); padding-bottom: var(--cds-pad-xl); }
+.oc-foot-inner { max-width: var(--oc-max); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--cds-gap-lg); }
+.oc-foot-logo { width: 170px; height: auto; }
+.oc-foot p { margin: 0; font-size: var(--cds-font-size-caption); color: #C9D6CF; }
+@media print { .oc-onda { display: none; } .oc-card { box-shadow: none; } }
+.oc-dobra > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-sm); }
+.oc-dobra > summary::-webkit-details-marker { display: none; }
+.oc-dobra > summary h2 { display: inline-flex; align-items: center; gap: 12px; text-transform: uppercase; font-weight: 400; letter-spacing: 0.04em; font-size: clamp(1.5rem, 3.2vw, 2.1rem); margin: 0; }
+.oc-dobra > summary h2::before { content: ""; width: 0.5em; height: 0.5em; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform var(--cds-dur-slow) var(--cds-ease-out); }
+.oc-dobra[open] > summary h2::before { transform: rotate(45deg); }
+.oc-dobra-dica { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.oc-dobra > summary:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 4px; }
+.oc-dobra[open] > .oc-intro { margin-top: var(--cds-gap-md); }
+@media print { .oc-dobra:not([open]) > *:not(summary) { display: block; } }
+
+/* ---------- Revisão de alinhamentos e espaçamentos (tela de computador) ---------- */
+.oc { --oc-max: 1200px; --oc-ritmo: 28px; --oc-sombra: 5px; }
+.oc-wrap, .oc-foot-inner { padding-inline: 4px; }
+.oc-section { padding: calc(var(--oc-ritmo) * 2) 0; }
+.oc-section > h2, .oc-dobra > summary { margin-bottom: 0; }
+.oc-intro { margin: 12px 0 var(--oc-ritmo); max-width: 80ch; }
+.oc-grid { gap: calc(var(--oc-ritmo) + var(--oc-sombra)); align-items: stretch; }
+.oc-grid + .oc-grid, .oc-grid + .oc-card, .oc-card + .oc-grid, .oc-card + .oc-card, .oc-grid + .oc-filtros, .oc-card + .oc-filtros { margin-top: calc(var(--oc-ritmo) + var(--oc-sombra)); }
+.oc-filtros { margin: 0 0 var(--oc-ritmo); gap: 16px; align-items: flex-end; }
+.oc-card { padding: 24px 26px; display: flex; flex-direction: column; }
+.oc-card > h3, .oc-card-head h3 { margin: 0 0 4px; line-height: 1.3; }
+.oc-card > .oc-small, .oc-card-head .oc-small { margin: 0 0 16px; }
+.oc-card-head { margin-bottom: 4px; align-items: flex-end; }
+.oc-card-head > div:first-child { flex: 1 1 280px; }
+.oc-card > h3 + .oc-small + .oc-table-wrap, .oc-card .oc-table-wrap { margin-top: 4px; }
+.oc-card > h3:not(:first-child) { margin-top: var(--oc-ritmo); }
+.oc-card > .oc-note { margin-top: auto; padding-top: 16px; }
+.oc-chart { margin-top: 4px; }
+.oc-sub { margin: calc(var(--oc-ritmo) * 2) 0 var(--oc-ritmo); }
+.oc-kpis { margin: var(--oc-ritmo) 0; }
+.oc-kpi { padding: 20px 20px 20px 0; }
+.oc-kpi + .oc-kpi { padding-left: 20px; }
+.oc-kpi-label { line-height: 1.35; padding-bottom: 6px; }
+.oc-takeaway { margin: var(--oc-ritmo) auto 0; max-width: 70ch; }
+.oc-nav-inner { padding: 10px 4px; gap: 6px; }
+.oc-leitura { margin-bottom: var(--oc-ritmo); }
+.oc-fatores h3 { margin-bottom: 8px; }
+.oc-table th, .oc-table td { padding: 7px 10px; }
+.oc-table th:first-child, .oc-table td:first-child { padding-left: 0; }
+.oc-table th:last-child, .oc-table td:last-child { padding-right: 0; }
+.oc-rodape { padding: var(--oc-ritmo) 0; }
+@media (min-width: 1000px) {
+  .oc-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .oc-kpi-value { font-size: 2.3rem; }
+  .oc-grid.wide-left { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+  .oc-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .oc-chart.tall { min-height: 480px; }
+}
+
+/* ---------- Texto em largura total e menos espaço vazio ---------- */
+.oc p, .oc-intro, .oc-takeaway, .oc-manchete, .oc-rodape p { max-width: none; }
+.oc-takeaway { text-align: left; }
+.oc-chart, .oc-chart.tall, .oc-mapbox { min-height: 0; }
+.oc-chart.dash-skeleton, .oc-chart:empty { min-height: 240px; }
+.oc-grid { align-items: stretch; }
+.oc-grid > * { margin-top: 0 !important; }
+.oc-card { justify-content: flex-start; }
+.oc-table td.r, .oc-table th.r { white-space: nowrap; }
+.oc h3.oc-sub { margin: 56px 0 20px; }
+.oc-card > .oc-note { margin-top: 0; padding-top: 14px; }
+.oc-mapbox svg { display: block; }
+.oc-rodape > h2 { font-size: var(--cds-font-size-body) !important; text-transform: none !important; letter-spacing: 0 !important; font-weight: 700 !important; }
+</style>
+
+<div class="oc">
+<div class="oc-wrap">
+
+<header class="oc-hero oc-bleed" id="inicio">
+  <svg class="oc-onda" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,0 H1440 V150 C1180,170 1020,210 860,268 C780,296 660,296 580,268 C420,210 260,170 0,150 Z" fill="#E9D49C"/>
+    <path d="M0,118 C260,138 420,178 580,236 C660,264 780,264 860,236 C1020,178 1180,138 1440,118" fill="none" stroke="#E3F1EB" stroke-width="6"/>
+    <path d="M0,62 C300,78 500,92 720,92 C940,92 1140,78 1440,62" fill="none" stroke="#E3F1EB" stroke-width="5"/>
+  </svg>
+  <h1 class="oc-logo"><img src="assets/logo-obs-cacau.png" alt="Observatório do Cacau" width="1400" height="407"></h1>
+</header>
+
+<p class="oc-takeaway" id="resumo">Em <b data-draw="v" data-source="destaques" data-field="recebimentos_ano" data-row="0" data-fmt="ano" class="dash-skeleton">—</b>, a indústria recebeu <b data-draw="v" data-source="destaques" data-field="recebimentos_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</b> mil toneladas de amêndoas nacionais e moeu <b data-draw="v" data-source="destaques" data-field="moagem_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</b> mil. No mercado internacional, o preço médio de <b data-draw="v" data-source="destaques" data-field="preco_mes" data-row="0" data-fmt="txt" class="dash-skeleton">—</b> foi de US$ <b data-draw="v" data-source="destaques" data-field="preco_usd" data-row="0" data-fmt="int" class="dash-skeleton">—</b> por tonelada, uma variação de <b data-draw="v" data-source="destaques" data-field="preco_var12_pct" data-row="0" data-fmt="pct" class="dash-skeleton">—</b> em doze meses.</p>
+
+<div class="oc-kpis" id="destaques" data-fetchpriority="high">
+  <div class="oc-kpi" id="kpi-producao">
+    <p class="oc-kpi-label">Produção de amêndoas, IBGE (<span data-draw="v" data-source="destaques" data-field="producao_ano" data-row="0" data-fmt="ano">—</span>)</p>
+    <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="producao_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+    <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="destaques" data-field="producao_var_pct" data-row="0" data-good="up">—</span> sobre o ano anterior</p>
+  </div>
+  <div class="oc-kpi" id="kpi-recebimentos">
+    <p class="oc-kpi-label">Recebimentos da indústria, AIPC (<span data-draw="v" data-source="destaques" data-field="recebimentos_ano" data-row="0" data-fmt="ano">—</span>)</p>
+    <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="recebimentos_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+    <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="destaques" data-field="recebimentos_var_pct" data-row="0" data-good="up">—</span> sobre o ano anterior</p>
+  </div>
+  <div class="oc-kpi" id="kpi-moagem">
+    <p class="oc-kpi-label">Moagem no Brasil, AIPC (<span data-draw="v" data-source="destaques" data-field="moagem_ano" data-row="0" data-fmt="ano">—</span>)</p>
+    <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="moagem_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+    <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="destaques" data-field="moagem_var_pct" data-row="0" data-good="up">—</span> sobre o ano anterior</p>
+  </div>
+  <div class="oc-kpi" id="kpi-preco">
+    <p class="oc-kpi-label">Preço médio ICCO (<span data-draw="v" data-source="destaques" data-field="preco_mes" data-row="0" data-fmt="txt">—</span>)</p>
+    <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="preco_usd" data-row="0" data-fmt="int" class="dash-skeleton">—</span><small>US$/t</small></p>
+    <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="destaques" data-field="preco_var12_pct" data-row="0" data-good="none">—</span> em doze meses</p>
+  </div>
+  <div class="oc-kpi" id="kpi-saldo">
+    <p class="oc-kpi-label">Saldo comercial de cacau e derivados (<span data-draw="v" data-source="destaques" data-field="saldo_ano" data-row="0" data-fmt="ano">—</span>)</p>
+    <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="saldo_usd_mi" data-row="0" data-fmt="sd1" class="dash-skeleton">—</span><small>US$ mi</small></p>
+    <p class="oc-kpi-delta">exportações de US$ <span class="oc-num" data-draw="v" data-source="destaques" data-field="exportacao_usd_mi" data-row="0" data-fmt="d1">—</span> mi e importações de US$ <span class="oc-num" data-draw="v" data-source="destaques" data-field="importacao_usd_mi" data-row="0" data-fmt="d1">—</span> mi</p>
+  </div>
+</div>
+
+</div>
+
+<nav class="oc-nav" aria-label="Seções do painel">
+  <div class="oc-wrap oc-nav-inner">
+    <button type="button" data-target="tendencias">Tendências</button>
+    <button type="button" data-target="producao">Produção</button>
+    <button type="button" data-target="territorio">Território</button>
+    <button type="button" data-target="industria">Indústria</button>
+    <button type="button" data-target="comercio">Comércio exterior</button>
+    <button type="button" data-target="credito">Crédito rural</button>
+    <button type="button" data-target="sobre">Sobre os dados</button>
+  </div>
+</nav>
+
+<div class="oc-wrap">
+
+<!-- TENDÊNCIAS -->
+<section class="oc-section oc-sec-dobra" id="tendencias">
+  <details class="oc-dobra" id="tendencias-dobra">
+  <summary>
+    <h2>Tendências de mercado</h2>
+    <span class="oc-dobra-dica">Boletim mensal · clique para abrir ou fechar</span>
+  </summary>
+  <p class="oc-intro">Boletim mensal sobre preço, oferta, demanda e clima do cacau, montado a partir de fontes públicas. Edição de <b data-draw="v" data-source="tendencias_leitura" data-field="edicao" data-row="0" data-fmt="mesano">—</b>, com dados até <span data-draw="v" data-source="tendencias_leitura" data-field="data_corte" data-row="0" data-fmt="data">—</span>.</p>
+
+  <div class="oc-leitura" id="leitura-mes">
+    <p class="oc-manchete" data-draw="t_manchete" data-source="tendencias_leitura" data-field="texto" data-where="tipo=manchete">—</p>
+    <div class="oc-grid two">
+      <div class="oc-fatores" id="fatores-altistas">
+        <h3>Fatores altistas</h3>
+        <ol data-draw="t_fatores" data-source="tendencias_leitura" data-row-key="id" data-tipo="altista"></ol>
+      </div>
+      <div class="oc-fatores" id="fatores-baixistas">
+        <h3>Fatores baixistas</h3>
+        <ol data-draw="t_fatores" data-source="tendencias_leitura" data-row-key="id" data-tipo="baixista"></ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="oc-kpis" id="indicadores-mes">
+    <div class="oc-kpi">
+      <p class="oc-kpi-label">Preço médio ICCO (<span data-draw="v" data-source="destaques" data-field="preco_mes" data-row="0" data-fmt="txt">—</span>)</p>
+      <p class="oc-kpi-value"><span data-draw="v" data-source="destaques" data-field="preco_usd" data-row="0" data-fmt="int" class="dash-skeleton">—</span><small>US$/t</small></p>
+      <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="destaques" data-field="preco_var12_pct" data-row="0" data-good="none">—</span> em doze meses</p>
+    </div>
+    <div class="oc-kpi">
+      <p class="oc-kpi-label">Chegadas aos portos da Costa do Marfim, 1º/out a <span data-draw="v" data-source="tend_destaques" data-field="civ_data" data-row="0" data-fmt="dm">—</span></p>
+      <p class="oc-kpi-value"><span data-draw="v" data-source="tend_destaques" data-field="civ_acum_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+      <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="tend_destaques" data-field="civ_var_pct" data-row="0" data-good="none">—</span> sobre a safra passada</p>
+    </div>
+    <div class="oc-kpi">
+      <p class="oc-kpi-label">Moagem Europa + Ásia, <span data-draw="v" data-source="tend_destaques" data-field="moagem_periodo" data-row="0" data-fmt="txt">—</span></p>
+      <p class="oc-kpi-value"><span data-draw="v" data-source="tend_destaques" data-field="moagem_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+      <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="tend_destaques" data-field="moagem_var_pct" data-row="0" data-good="none">—</span> sobre o mesmo trimestre de 2025</p>
+    </div>
+    <div class="oc-kpi">
+      <p class="oc-kpi-label">Recebimento AIPC, <span data-draw="v" data-source="tend_destaques" data-field="aipc_periodo" data-row="0" data-fmt="txt">—</span></p>
+      <p class="oc-kpi-value"><span data-draw="v" data-source="tend_destaques" data-field="aipc_mil_t" data-row="0" data-fmt="d1" class="dash-skeleton">—</span><small>mil t</small></p>
+      <p class="oc-kpi-delta"><span class="oc-delta" data-draw="delta" data-source="tend_destaques" data-field="aipc_var_pct" data-row="0" data-good="none">—</span> sobre o mesmo trimestre de 2025</p>
+    </div>
+    <div class="oc-kpi">
+      <p class="oc-kpi-label">Chance de El Niño forte ou muito forte, <span data-draw="v" data-source="tend_destaques" data-field="enso_meses" data-row="0" data-fmt="txt">—</span></p>
+      <p class="oc-kpi-value"><span data-draw="v" data-source="tend_destaques" data-field="enso_forte_pct" data-row="0" data-fmt="int" class="dash-skeleton">—</span><small>%</small></p>
+      <p class="oc-kpi-delta">NOAA, previsão de novembro</p>
+    </div>
+  </div>
+
+  <h3 class="oc-sub">Preço</h3>
+  <div class="oc-grid wide-left">
+    <div class="oc-card" id="card-preco">
+      <div class="oc-card-head">
+        <div><h3>Preço médio mensal do cacau</h3><p class="oc-small">ICCO, por tonelada</p></div>
+        <div class="oc-controls">
+          <label>Moeda
+            <select class="dash-select" data-param="moeda" aria-label="Moeda">
+              <option value="usd">Dólar (US$)</option>
+              <option value="eur">Euro (€)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="oc-chart" data-draw="chart_preco" data-source="preco_icco"></div>
+      <p class="oc-note">O pico da série foi em <span data-draw="v" data-source="destaques" data-field="pico_mes" data-row="0" data-fmt="txt">—</span>, a US$ <span class="oc-num" data-draw="v" data-source="destaques" data-field="pico_usd" data-row="0" data-fmt="int">—</span>/t; o último mês está <span class="oc-num" data-draw="v" data-source="destaques" data-field="abaixo_pico_pct" data-row="0" data-fmt="pct">—</span> em relação a ele. De agosto a outubro de 2026 a média vem de fontes secundárias da ICCO, sem valor em euro.</p>
+    </div>
+    <div class="oc-card" id="card-balanco">
+      <h3>Balanço global e projeções</h3>
+      <p class="oc-small">Estimativas públicas mais recentes</p>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="balanco_projecoes" data-row-key="id">
+          <thead><tr><th data-field="quem">Quem</th><th data-field="safra">Período</th><th data-field="indicador">Indicador</th><th class="r" data-field="valor">Valor</th></tr></thead>
+          <tbody data-draw="tab_balanco"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="oc-sub">Oferta</h3>
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-chegadas">
+      <h3>Chegadas de cacau aos portos da Costa do Marfim</h3>
+      <p class="oc-small">Toneladas, comparando com o mesmo período da safra passada</p>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="civ_chegadas" data-row-key="id">
+          <thead><tr><th data-field="data_ref">Até</th><th data-field="medida">Medida</th><th class="r" data-field="safra_2026_27_t">2026/27</th><th class="r" data-field="safra_2025_26_t">2025/26</th><th class="r" data-field="var_pct">Var.</th></tr></thead>
+          <tbody data-draw="tab_civ"></tbody>
+        </table>
+      </div>
+      <p class="oc-note">A Costa do Marfim passou a contar a safra a partir de 1º de setembro; a comparação usa 1º de outubro, como a Bloomberg.</p>
+    </div>
+    <div class="oc-card" id="card-estimativas">
+      <h3>Estimativas de produção para 2026/27</h3>
+      <p class="oc-small">Mil toneladas</p>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="estimativas_safra" data-row-key="pais">
+          <thead><tr><th data-field="pais">País</th><th class="r" data-field="safra_2025_26_mil_t">2025/26</th><th class="r" data-field="est_2026_27_min_mil_t">2026/27 mín.</th><th class="r" data-field="est_2026_27_max_mil_t">2026/27 máx.</th><th data-field="quem_estima">Quem estima</th></tr></thead>
+          <tbody data-draw="tab_estimativas"></tbody>
+        </table>
+      </div>
+      <h3>Preço garantido ao produtor</h3>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="precos_produtor" data-row-key="pais">
+          <thead><tr><th data-field="pais">País</th><th class="r" data-field="preco">2026/27</th><th class="r" data-field="anterior">Anterior</th><th class="r" data-field="var_pct">Var.</th><th data-field="unidade">Unidade</th></tr></thead>
+          <tbody data-draw="tab_precos_prod"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="oc-sub">Demanda</h3>
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-moagem-global">
+      <h3>Moagem trimestral na Europa e na Ásia</h3>
+      <p class="oc-small">Mil toneladas · ECA e CAA</p>
+      <div class="oc-chart" data-draw="chart_moagem_global" data-source="moagem_global"></div>
+      <p class="oc-note">Em <span data-draw="v" data-source="moagem_global_anual" data-field="ano" data-row="0" data-fmt="ano">—</span>, último ano completo, a moagem somou <b class="oc-num" data-draw="v" data-source="moagem_global_anual" data-field="europa_mil_t" data-row="0" data-fmt="d1">—</b> mil t na Europa (<span class="oc-num" data-draw="v" data-source="moagem_global_anual" data-field="europa_var_pct" data-row="0" data-fmt="pct">—</span>) e <b class="oc-num" data-draw="v" data-source="moagem_global_anual" data-field="asia_mil_t" data-row="0" data-fmt="d1">—</b> mil t na Ásia (<span class="oc-num" data-draw="v" data-source="moagem_global_anual" data-field="asia_var_pct" data-row="0" data-fmt="pct">—</span>).</p>
+    </div>
+    <div class="oc-card" id="card-aipc-trimestral">
+      <h3>Recebimento de amêndoas no Brasil, por trimestre</h3>
+      <p class="oc-small">Mil toneladas · AIPC (SindiDados – Campos Consultores)</p>
+      <div class="oc-chart" data-draw="chart_aipc_tri" data-source="aipc_trimestral"></div>
+      <p class="oc-note">A moagem no Brasil foi de <span class="oc-num" data-draw="v" data-source="tend_destaques" data-field="aipc_moagem_mil_t" data-row="0" data-fmt="d1">—</span> mil t no <span data-draw="v" data-source="tend_destaques" data-field="aipc_periodo" data-row="0" data-fmt="txt">—</span>, e não houve importação de amêndoas no 2º e no 3º trimestres de 2026.</p>
+    </div>
+  </div>
+
+  <h3 class="oc-sub">Clima</h3>
+  <div class="oc-card" id="card-enso">
+    <h3>Probabilidade de El Niño por intensidade</h3>
+    <p class="oc-small">Percentual por trimestre móvel · NOAA CPC, previsão de novembro de 2026</p>
+    <div class="oc-chart" data-draw="chart_enso" data-source="enso_probabilidades"></div>
+    <p class="oc-note">El Niño forte costuma trazer tempo mais seco e quente ao Oeste Africano, sobretudo no Harmatã (novembro a março), quando as vagens da safra principal e da intermediária se desenvolvem.</p>
+  </div>
+  </details>
+</section>
+
+
+<!-- PRODUÇÃO -->
+<section class="oc-section" id="producao">
+  <h2>Produção</h2>
+  <p class="oc-intro">A Produção Agrícola Municipal do IBGE estima quanto cacau em amêndoa é colhido em cada estado. Pará e Bahia respondem por <b class="oc-num" data-draw="v" data-source="destaques" data-field="para_bahia_pct" data-row="0" data-fmt="p1">—</b> da produção de <span data-draw="v" data-source="destaques" data-field="producao_ano" data-row="0" data-fmt="ano">—</span>, com perfis muito diferentes: o Pará colhe <b class="oc-num" data-draw="v" data-source="producao_ultimo_ano" data-field="kg_ha" data-where="estado=Pará" data-fmt="int">—</b> kg por hectare, contra <b class="oc-num" data-draw="v" data-source="producao_ultimo_ano" data-field="kg_ha" data-where="estado=Bahia" data-fmt="int">—</b> kg na Bahia.</p>
+
+  <div class="oc-grid wide-left">
+    <div class="oc-card" id="card-producao-estados">
+      <div class="oc-card-head">
+        <div><h3>Produção por estado, 2009 em diante</h3><p class="oc-small">IBGE, Produção Agrícola Municipal</p></div>
+        <div class="oc-controls">
+          <label>Indicador
+            <select class="dash-select" data-param="metrica" aria-label="Indicador">
+              <option value="toneladas">Produção (t)</option>
+              <option value="area_ha">Área colhida (ha)</option>
+              <option value="kg_ha">Produtividade (kg/ha)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="oc-chart" data-draw="chart_producao" data-source="producao_estados"></div>
+    </div>
+    <div class="oc-card" id="card-producao-tabela">
+      <h3>Estados produtores no último ano</h3>
+      <p class="oc-small">IBGE, ano <span data-draw="v" data-source="destaques" data-field="producao_ano" data-row="0" data-fmt="ano">—</span></p>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="producao_ultimo_ano" data-row-key="estado">
+          <thead><tr><th data-field="estado">Estado</th><th class="r" data-field="toneladas">Produção (t)</th><th class="r" data-field="area_ha">Área (ha)</th><th class="r" data-field="kg_ha">kg/ha</th></tr></thead>
+          <tbody data-draw="tab_producao"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="oc-card" id="card-mapa-producao">
+    <div class="oc-card-head">
+      <div><h3>Produção por município, 2025</h3><p class="oc-small">IBGE, Produção Agrícola Municipal · cores em sete faixas com o mesmo número de municípios cada</p></div>
+      <div class="oc-controls">
+        <label>Indicador
+          <select class="dash-select" data-param="metrica_mun" aria-label="Indicador do mapa">
+            <option value="toneladas">Produção (t)</option>
+            <option value="area_ha">Área colhida (ha)</option>
+            <option value="kg_ha">Produtividade (kg/ha)</option>
+            <option value="valor_mil_reais">Valor da produção (R$)</option>
+          </select>
+        </label>
+        <label>Estado
+          <select class="dash-select" data-param="uf_mun" aria-label="Estado do mapa">
+            <option value="BR">Brasil</option>
+            <option value="PA">Pará</option>
+            <option value="BA">Bahia</option>
+            <option value="ES">Espírito Santo</option>
+            <option value="RO">Rondônia</option>
+            <option value="AM">Amazonas</option>
+            <option value="TO">Tocantins</option>
+            <option value="SP">São Paulo</option>
+            <option value="MT">Mato Grosso</option>
+            <option value="MG">Minas Gerais</option>
+            <option value="RR">Roraima</option>
+            <option value="CE">Ceará</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="oc-grid wide-left">
+      <div>
+        <div class="oc-chart oc-mapbox" data-draw="mapa_producao" data-source="producao_municipal malha_municipios malha_ufs"></div>
+      </div>
+      <div>
+        <h3>Maiores municípios</h3>
+        <p class="oc-small">No indicador e estado escolhidos<span data-draw="nota_kgha" data-source="producao_mun_top"></span></p>
+        <div class="oc-table-wrap">
+          <table class="oc-table" data-source="producao_mun_top" data-row-key="cod_ibge">
+            <thead><tr><th data-field="municipio">Município</th><th data-field="uf">UF</th><th class="r" data-field="valor_indicador">Valor</th><th class="r" data-field="participacao_pct">Part.</th></tr></thead>
+            <tbody data-draw="tab_mun_prod"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="oc-note">Malha municipal simplificada do projeto geodata-br (anterior a 2013), a mesma do Painel da Agropecuária Municipal. Mojuí dos Campos (PA), criado depois, não tem polígono próprio: suas 6 t entram na tabela, mas no mapa o território aparece dentro de Santarém. A participação usa o total do indicador no recorte; em produtividade, a coluna mostra a parte do município na produção.</p>
+  </div>
+
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-ibge-aipc">
+      <h3>Produção estimada e recebimentos da indústria</h3>
+      <p class="oc-small">Mil toneladas · IBGE e AIPC</p>
+      <div class="oc-chart" data-draw="chart_ibge_aipc" data-source="ibge_aipc"></div>
+      <p class="oc-note">As duas fontes medem coisas diferentes: o IBGE estima a produção colhida e a AIPC registra as amêndoas recebidas pelas processadoras. Em <span data-draw="v" data-source="destaques" data-field="razao_ano" data-row="0" data-fmt="ano">—</span>, os recebimentos equivaleram a <b class="oc-num" data-draw="v" data-source="destaques" data-field="razao_pct" data-row="0" data-fmt="p1">—</b> da produção estimada. A Youx deixou o IBGE fora da sua v1 por essa divergência; aqui as séries aparecem lado a lado para que a diferença fique visível.</p>
+    </div>
+    <div class="oc-card" id="card-recebimentos-uf">
+      <h3>Recebimentos por estado de origem</h3>
+      <p class="oc-small">Toneladas · AIPC (Sindidados – Campos Consultores) · 2026 parcial</p>
+      <div class="oc-chart" data-draw="chart_receb_uf" data-source="recebimentos_uf_aipc"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TERRITÓRIO -->
+<section class="oc-section" id="territorio">
+  <h2>Onde o cacau pode crescer</h2>
+  <p class="oc-intro">O índice de aptidão de terras da Youx combina solo, chuva, amplitude térmica, vento e radiação solar para classificar áreas de pastagem e de formação florestal, excluídas terras indígenas, unidades de conservação, territórios quilombolas e assentamentos. Há <b class="oc-num" data-draw="v" data-source="aptidao_resumo" data-field="pasto_alta_mi_ha" data-row="0" data-fmt="d1">—</b> milhões de hectares de pastagem com aptidão alta ou muito alta, <b class="oc-num" data-draw="v" data-source="aptidao_resumo" data-field="pasto_alta_amazonia_mi_ha" data-row="0" data-fmt="d1">—</b> milhões deles na Amazônia e <b class="oc-num" data-draw="v" data-source="aptidao_resumo" data-field="pasto_alta_mata_mi_ha" data-row="0" data-fmt="d1">—</b> milhões na Mata Atlântica.</p>
+
+  <div class="oc-controls oc-filtros" id="filtros-territorio">
+    <label>Uso do solo
+      <select class="dash-select" data-param="uso" aria-label="Uso do solo">
+        <option value="pasto">Pastagem</option>
+        <option value="floresta">Formação florestal</option>
+      </select>
+    </label>
+    <label>Bioma predominante
+      <select class="dash-select" data-param="bioma" aria-label="Bioma predominante">
+        <option value="Todos">Todos os biomas</option>
+        <option value="Amazônia">Amazônia</option>
+        <option value="Mata Atlântica">Mata Atlântica</option>
+        <option value="Cerrado">Cerrado</option>
+        <option value="Caatinga">Caatinga</option>
+        <option value="Pampa">Pampa</option>
+        <option value="Pantanal">Pantanal</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="oc-grid wide-left">
+    <div class="oc-card" id="card-mapa">
+      <h3>Área com aptidão alta ou muito alta, por município</h3>
+      <p class="oc-small">Tamanho do círculo proporcional à área; cor pelo bioma predominante do município (IBGE)</p>
+      <div class="oc-chart tall" data-draw="mapa" data-source="municipios_aptidao" data-fetchpriority="low"></div>
+      <p class="oc-note">Aptidão em formação florestal não indica conversão de floresta. Ela aparece como referência para manejo e enriquecimento de áreas já florestadas.</p>
+    </div>
+    <div class="oc-card" id="card-biomas">
+      <h3>Área apta por bioma e classe</h3>
+      <p class="oc-small">Milhões de hectares · bioma de cada área no índice</p>
+      <div class="oc-chart" data-draw="chart_bioma" data-source="aptidao_bioma"></div>
+      <h3>Municípios com mais área apta</h3>
+      <p class="oc-small">Mil hectares com aptidão alta ou muito alta, no uso e bioma escolhidos</p>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="top_municipios" data-row-key="cod_ibge">
+          <thead><tr><th data-field="municipio">Município</th><th data-field="uf">UF</th><th class="r" data-field="muito_alta_mil_ha">Muito alta</th><th class="r" data-field="alta_mil_ha">Alta</th></tr></thead>
+          <tbody data-draw="tab_municipios"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INDÚSTRIA -->
+<section class="oc-section" id="industria">
+  <h2>Indústria processadora</h2>
+  <p class="oc-intro">Amêndoas recebidas, moagem e derivados produzidos pelas indústrias associadas à AIPC. A moagem também depende de amêndoas importadas: em <span data-draw="v" data-source="industria_destaque" data-field="ano" data-row="0" data-fmt="ano">—</span>, a diferença entre moagem e recebimentos de cacau nacional foi de <b class="oc-num" data-draw="v" data-source="industria_destaque" data-field="diferenca_mil_t" data-row="0" data-fmt="sd1">—</b> mil t, e as importações de amêndoas somaram <b class="oc-num" data-draw="v" data-source="industria_destaque" data-field="importacao_amendoa_mil_t" data-row="0" data-fmt="d1">—</b> mil t.</p>
+
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-industria">
+      <h3>Recebimentos, moagem e importação de amêndoas</h3>
+      <p class="oc-small">Mil toneladas · AIPC e Comex Stat (SH 1801)</p>
+      <div class="oc-chart" data-draw="chart_industria" data-source="industria"></div>
+    </div>
+    <div class="oc-card" id="card-derivados">
+      <h3>Derivados produzidos no país</h3>
+      <p class="oc-small">Mil toneladas · AIPC (Sindidados – Campos Consultores)</p>
+      <div class="oc-chart" data-draw="chart_derivados" data-source="derivados_aipc"></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMÉRCIO EXTERIOR -->
+<section class="oc-section" id="comercio">
+  <h2>Balança comercial</h2>
+  <p class="oc-intro">Exportações e importações de cacau e derivados (capítulo 18 do Sistema Harmonizado, do cacau em amêndoa ao chocolate), em dólares FOB, segundo o Comex Stat. Em <span data-draw="v" data-source="destaques" data-field="saldo_ano" data-row="0" data-fmt="ano">—</span>, o Brasil exportou US$ <b class="oc-num" data-draw="v" data-source="destaques" data-field="exportacao_usd_mi" data-row="0" data-fmt="d1">—</b> milhões e importou US$ <b class="oc-num" data-draw="v" data-source="destaques" data-field="importacao_usd_mi" data-row="0" data-fmt="d1">—</b> milhões.</p>
+
+  <div class="oc-card" id="card-balanca">
+    <h3>Exportações, importações e saldo</h3>
+    <p class="oc-small">US$ milhões FOB · 2026 de janeiro a julho</p>
+    <div class="oc-chart" data-draw="chart_balanca" data-source="balanca_anual"></div>
+  </div>
+
+  <div class="oc-controls oc-filtros" id="filtros-comercio">
+    <label>Fluxo
+      <select class="dash-select" data-param="fluxo" aria-label="Fluxo">
+        <option value="Exportação">Exportação</option>
+        <option value="Importação">Importação</option>
+      </select>
+    </label>
+    <label>Ano dos países
+      <select class="dash-select" data-param="ano_paises" aria-label="Ano">
+        <option value="2026">2026 (jan–jul)</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-produtos">
+      <h3>Por produto</h3>
+      <p class="oc-small">US$ milhões FOB, no fluxo escolhido</p>
+      <div class="oc-chart" data-draw="chart_produtos" data-source="comex_produtos"></div>
+    </div>
+    <div class="oc-card" id="card-paises">
+      <h3>Principais países</h3>
+      <p class="oc-small">US$ milhões FOB, no fluxo e ano escolhidos</p>
+      <div class="oc-chart" data-draw="chart_paises" data-source="comex_top_paises"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CRÉDITO -->
+<section class="oc-section" id="credito">
+  <h2>Crédito rural</h2>
+  <p class="oc-intro">Contratos de crédito rural para o cacau em 2025, segundo a Matriz de Dados do Crédito Rural do Banco Central (recorte por produto, por estado). Foram R$ <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="total_mi" data-row="0" data-fmt="d1">—</b> milhões em <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="contratos" data-row="0" data-fmt="int">—</b> contratos, para <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="area_mil_ha" data-row="0" data-fmt="d1">—</b> mil hectares financiados. O Pronaf concentra <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="pronaf_contratos_pct" data-row="0" data-fmt="p1">—</b> dos contratos, e a linha Pronaf Floresta, para sistemas agroflorestais, somou R$ <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="saf_mi" data-row="0" data-fmt="d1">—</b> milhões.</p>
+
+  <div class="oc-callout" id="nota-fgpp">
+    <p>Uma única operação de comercialização (FGPP, financiamento para garantia de preços ao produtor) de R$ <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="fgpp_mi" data-row="0" data-fmt="d1">—</b> milhões responde por <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="fgpp_pct" data-row="0" data-fmt="p1">—</b> do valor. Sem ela, o crédito ao cacau em 2025 foi de R$ <b class="oc-num" data-draw="v" data-source="credito_resumo" data-field="sem_fgpp_mi" data-row="0" data-fmt="d1">—</b> milhões.</p>
+  </div>
+
+  <div class="oc-controls oc-filtros" id="filtros-credito">
+    <label>Operações
+      <select class="dash-select" data-param="fgpp" aria-label="Operações">
+        <option value="com">Todas</option>
+        <option value="sem">Sem a operação de FGPP</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="oc-grid two">
+    <div class="oc-card" id="card-credito-uf">
+      <h3>Valor contratado por estado e finalidade</h3>
+      <p class="oc-small">R$ milhões · BCB, Matriz de Dados do Crédito Rural, 2025</p>
+      <div class="oc-chart" data-draw="chart_credito_uf" data-source="credito_uf"></div>
+    </div>
+    <div class="oc-card" id="card-credito-linha">
+      <h3>Por programa e linha</h3>
+      <p class="oc-small">R$ milhões · passe o cursor para ver contratos e área</p>
+      <div class="oc-chart" data-draw="chart_credito_linha" data-source="credito_linha"></div>
+    </div>
+  </div>
+
+  <div class="oc-card" id="card-credito-ifs">
+    <h3>Instituições financeiras que mais emprestaram para o cacau</h3>
+    <p class="oc-small">As oito maiores por valor contratado em 2025</p>
+    <div class="oc-table-wrap">
+      <table class="oc-table" data-source="credito_ifs" data-row-key="cnpj_if">
+        <thead><tr><th data-field="instituicao">Instituição</th><th data-field="segmento_if">Segmento</th><th class="r" data-field="valor_mi">R$ milhões</th><th class="r" data-field="contratos">Contratos</th></tr></thead>
+        <tbody data-draw="tab_credito_ifs"></tbody>
+      </table>
+    </div>
+    <p class="oc-note">A base por município do Painel da Agropecuária não identifica o produto financiado, por isso o recorte de cacau fica no nível dos estados.</p>
+  </div>
+</section>
+
+
+<!-- SOBRE -->
+<section class="oc-section oc-rodape" id="sobre">
+  <h2>Sobre os dados</h2>
+  <p>Esta versão usa as bases que a Youx já tratou. As bases usadas em cada gráfico estão na pasta data/ do repositório, com o código que as gerou em scripts/.</p>
+  <div>
+    <div>
+      <p>Os anos de 2026 são parciais: o comércio exterior vai de janeiro a julho, o preço da ICCO até outubro (agosto a outubro vindos de fontes secundárias) e os recebimentos por estado trazem só os meses já informados pela AIPC.</p>
+      <p>Produção (IBGE) e recebimentos (AIPC) não coincidem e não devem ser somados ou comparados como a mesma medida.</p>
+      <p>O índice de aptidão cobre só áreas de pastagem e de formação florestal do MapBiomas, fora de áreas protegidas e de assentamentos. No mapa, cada município recebe o bioma predominante do IBGE; no gráfico por bioma, cada área entra no bioma em que está.</p>
+      <p>O crédito rural é o recorte do produto cacau na Matriz de Dados do Crédito Rural do Banco Central (SICOR), por estado, com contratos de 2025; a base vem do Painel da Agropecuária Municipal do Arapyaú.</p>
+      <p>A seção de Tendências é uma edição mensal: a leitura do mês e as tabelas de oferta, preço ao produtor, balanço e clima vêm de fontes públicas citadas item a item, e as séries de preço e moagem da Youx foram estendidas com os dados mais recentes.</p>
+      <p>Comércio exterior soma os códigos SH 1801 a 1806 por ano, mês, fluxo, produto e país; o município registrado é o da empresa, não o da produção.</p>
+    </div>
+    <details id="card-fontes">
+      <summary>Fontes mapeadas e situação de cada uma</summary>
+      <div class="oc-table-wrap">
+        <table class="oc-table" data-source="fontes" data-row-key="fonte">
+          <thead><tr><th data-field="fonte">Fonte</th><th data-field="dados">Dados</th><th data-field="situacao_resumo">Situação</th></tr></thead>
+          <tbody data-draw="tab_fontes"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="oc-foot oc-bleed" id="rodape">
+  <div class="oc-foot-inner">
+    <p>Observatório do Cacau · versão 1</p>
+  </div>
+</footer>
+
+</div>
+</div>
+
+<script>
+/* ---------- Cálculos ---------- */
+dash.calc('balanca_anual', {
+  title: 'Balança comercial por ano',
+  description: 'Soma das exportações e importações de cacau e derivados por ano, em US$ milhões e mil toneladas.',
+  inputs: ['comex_mensal'],
+  fn: (comex) => {
+    const by = new Map();
+    for (const r of comex) {
+      const a = +r.ano;
+      if (!by.has(a)) by.set(a, { ano: a, meses: new Set(), exp: 0, imp: 0, expT: 0, impT: 0 });
+      const o = by.get(a);
+      o.meses.add(+r.mes);
+      if (r.fluxo === 'Exportação') { o.exp += +r.fob_usd; o.expT += +r.toneladas; } else { o.imp += +r.fob_usd; o.impT += +r.toneladas; }
+    }
+    const r1 = (v) => Math.round(v * 10) / 10;
+    return [...by.values()].sort((a, b) => a.ano - b.ano).map((o) => ({
+      ano: o.ano, meses: o.meses.size,
+      exportacao_usd_mi: r1(o.exp / 1e6), importacao_usd_mi: r1(o.imp / 1e6), saldo_usd_mi: r1((o.exp - o.imp) / 1e6),
+      exportacao_mil_t: r1(o.expT / 1e3), importacao_mil_t: r1(o.impT / 1e3)
+    }));
+  }
+});
+
+dash.calc('destaques', {
+  title: 'Números de destaque',
+  description: 'Último valor de cada série principal e sua variação.',
+  inputs: ['producao_ibge', 'recebimentos_aipc', 'moagem_aipc', 'preco_icco', 'balanca_anual'],
+  fn: (producao, recebimentos, moagem, preco, balanca) => {
+    const r1 = (v) => Math.round(v * 10) / 10;
+    const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const mes = (iso) => MES[+iso.slice(5, 7) - 1] + '/' + iso.slice(0, 4);
+    const prodAno = new Map(), pbAno = new Map();
+    for (const r of producao) {
+      const a = +r.ano;
+      prodAno.set(a, (prodAno.get(a) || 0) + +r.toneladas);
+      if (r.estado === 'Pará' || r.estado === 'Bahia') pbAno.set(a, (pbAno.get(a) || 0) + +r.toneladas);
+    }
+    const pa = Math.max(...prodAno.keys());
+    const serie = (rows) => rows.map((r) => ({ ano: +r.ano, v: +r.valores })).sort((a, b) => a.ano - b.ano);
+    const rec = serie(recebimentos), moa = serie(moagem);
+    const rl = rec[rec.length - 1], rp = rec[rec.length - 2], ml = moa[moa.length - 1], mp = moa[moa.length - 2];
+    const recAno = new Map(rec.map((r) => [r.ano, r.v]));
+    const comum = [...prodAno.keys()].filter((a) => recAno.has(a));
+    const ra = Math.max(...comum);
+    const pr = preco.map((r) => ({ data: r.data, usd: +r.usd_por_tonelada })).sort((a, b) => (a.data < b.data ? -1 : 1));
+    const pl = pr[pr.length - 1];
+    const alvo = String(+pl.data.slice(0, 4) - 1) + pl.data.slice(4);
+    const p12 = pr.find((r) => r.data === alvo);
+    const pico = pr.reduce((m, r) => (r.usd > m.usd ? r : m));
+    const cheios = balanca.filter((r) => r.meses === 12);
+    const b = cheios[cheios.length - 1];
+    return [{
+      producao_ano: pa, producao_mil_t: r1(prodAno.get(pa) / 1e3), producao_var_pct: r1((prodAno.get(pa) / prodAno.get(pa - 1) - 1) * 100),
+      para_bahia_pct: r1(pbAno.get(pa) / prodAno.get(pa) * 100),
+      recebimentos_ano: rl.ano, recebimentos_mil_t: r1(rl.v / 1e3), recebimentos_var_pct: r1((rl.v / rp.v - 1) * 100),
+      moagem_ano: ml.ano, moagem_mil_t: r1(ml.v / 1e3), moagem_var_pct: r1((ml.v / mp.v - 1) * 100),
+      razao_ano: ra, razao_pct: r1(recAno.get(ra) / prodAno.get(ra) * 100),
+      preco_mes: mes(pl.data), preco_usd: Math.round(pl.usd), preco_var12_pct: p12 ? r1((pl.usd / p12.usd - 1) * 100) : null,
+      pico_mes: mes(pico.data), pico_usd: Math.round(pico.usd), abaixo_pico_pct: r1((pl.usd / pico.usd - 1) * 100),
+      saldo_ano: b.ano, exportacao_usd_mi: b.exportacao_usd_mi, importacao_usd_mi: b.importacao_usd_mi, saldo_usd_mi: b.saldo_usd_mi
+    }];
+  }
+});
+
+dash.calc('producao_estados', {
+  title: 'Produção por estado (agrupada)',
+  description: 'Produção, área colhida e produtividade por ano para Pará, Bahia, Espírito Santo, Rondônia e demais estados somados.',
+  inputs: ['producao_ibge'],
+  fn: (producao) => {
+    const grupos = ['Pará', 'Bahia', 'Espírito Santo', 'Rondônia'];
+    const by = new Map();
+    for (const r of producao) {
+      const g = grupos.includes(r.estado) ? r.estado : 'Demais estados';
+      const k = r.ano + '|' + g;
+      if (!by.has(k)) by.set(k, { ano: +r.ano, grupo: g, toneladas: 0, area_ha: 0 });
+      const o = by.get(k); o.toneladas += +r.toneladas; o.area_ha += +r.area_ha;
+    }
+    return [...by.values()].map((o) => ({ ...o, kg_ha: o.area_ha ? Math.round(o.toneladas * 1000 / o.area_ha) : null }))
+      .sort((a, b) => a.ano - b.ano);
+  }
+});
+
+dash.calc('producao_ultimo_ano', {
+  title: 'Estados produtores no último ano',
+  description: 'Produção, área colhida e produtividade de cada estado no ano mais recente do IBGE.',
+  inputs: ['producao_ibge'],
+  fn: (producao) => {
+    const ano = Math.max(...producao.map((r) => +r.ano));
+    return producao.filter((r) => +r.ano === ano)
+      .map((r) => ({ estado: r.estado, ano, toneladas: +r.toneladas, area_ha: +r.area_ha, kg_ha: Math.round(+r.toneladas * 1000 / +r.area_ha) }))
+      .sort((a, b) => b.toneladas - a.toneladas);
+  }
+});
+
+dash.calc('ibge_aipc', {
+  title: 'Produção IBGE e recebimentos AIPC',
+  description: 'Produção estimada pelo IBGE e amêndoas recebidas pela indústria, por ano, em mil toneladas.',
+  inputs: ['producao_ibge', 'recebimentos_aipc'],
+  fn: (producao, recebimentos) => {
+    const p = new Map();
+    for (const r of producao) p.set(+r.ano, (p.get(+r.ano) || 0) + +r.toneladas);
+    const anos = recebimentos.map((r) => +r.ano).sort((a, b) => a - b);
+    const rec = new Map(recebimentos.map((r) => [+r.ano, +r.valores]));
+    const r1 = (v) => (v == null ? null : Math.round(v / 100) / 10);
+    return anos.map((a) => ({ ano: a, producao_mil_t: p.has(a) ? r1(p.get(a)) : null, recebimentos_mil_t: r1(rec.get(a)) }));
+  }
+});
+
+dash.calc('industria', {
+  title: 'Recebimentos, moagem e importação de amêndoas',
+  description: 'Séries anuais da AIPC com a importação de cacau em amêndoa (SH 1801) do Comex Stat, em mil toneladas.',
+  inputs: ['recebimentos_aipc', 'moagem_aipc', 'comex_mensal'],
+  fn: (recebimentos, moagem, comex) => {
+    const imp = new Map(), meses = new Map();
+    for (const r of comex) {
+      const a = +r.ano;
+      if (!meses.has(a)) meses.set(a, new Set());
+      meses.get(a).add(+r.mes);
+      if (r.fluxo === 'Importação' && +r.sh4 === 1801) imp.set(a, (imp.get(a) || 0) + +r.toneladas);
+    }
+    const moa = new Map(moagem.map((r) => [+r.ano, +r.valores]));
+    const r1 = (v) => (v == null ? null : Math.round(v / 100) / 10);
+    return recebimentos.map((r) => {
+      const a = +r.ano, cheio = meses.has(a) && meses.get(a).size === 12;
+      return { ano: a, recebimentos_mil_t: r1(+r.valores), moagem_mil_t: r1(moa.get(a)),
+        importacao_amendoa_mil_t: cheio ? r1(imp.get(a) || 0) : null,
+        diferenca_mil_t: moa.has(a) ? r1(moa.get(a) - +r.valores) : null };
+    }).sort((a, b) => a.ano - b.ano);
+  }
+});
+
+dash.calc('industria_destaque', {
+  title: 'Indústria no último ano com dados completos',
+  description: 'Último ano com recebimentos, moagem e importação de amêndoas disponíveis.',
+  inputs: ['industria'],
+  fn: (industria) => {
+    const ok = industria.filter((r) => r.importacao_amendoa_mil_t != null && r.diferenca_mil_t != null);
+    return ok.length ? [ok[ok.length - 1]] : [];
+  }
+});
+
+dash.calc('moagem_global', {
+  title: 'Moagem trimestral Europa e Ásia',
+  description: 'Moagem de cacau por trimestre na Europa (ECA) e na Ásia (CAA), em mil toneladas.',
+  inputs: ['moagem_europa', 'moagem_asia'],
+  fn: (europa, asia) => {
+    const by = new Map();
+    const put = (rows, k) => rows.forEach((r) => {
+      const id = r.ano + ' ' + r.trimestre.replace('Q', 'T');
+      if (!by.has(id)) by.set(id, { periodo: id, ano: +r.ano, trimestre: +r.trimestre.slice(1), europa_mil_t: null, asia_mil_t: null });
+      by.get(id)[k] = Math.round(+r.toneladas / 100) / 10;
+    });
+    put(europa, 'europa_mil_t'); put(asia, 'asia_mil_t');
+    return [...by.values()].sort((a, b) => a.ano - b.ano || a.trimestre - b.trimestre);
+  }
+});
+
+dash.calc('moagem_global_anual', {
+  title: 'Moagem anual Europa e Ásia',
+  description: 'Soma dos quatro trimestres do último ano completo e variação sobre o ano anterior.',
+  inputs: ['moagem_europa', 'moagem_asia'],
+  fn: (europa, asia) => {
+    const soma = (rows) => { const m = new Map(), n = new Map(); rows.forEach((r) => { m.set(+r.ano, (m.get(+r.ano) || 0) + +r.toneladas); n.set(+r.ano, (n.get(+r.ano) || 0) + 1); }); return { m, n }; };
+    const e = soma(europa), s = soma(asia);
+    const anos = [...e.m.keys()].filter((a) => e.n.get(a) === 4 && s.n.get(a) === 4 && e.m.has(a - 1) && s.m.has(a - 1));
+    const a = Math.max(...anos);
+    const r1 = (v) => Math.round(v * 10) / 10;
+    return [{ ano: a, europa_mil_t: r1(e.m.get(a) / 1e3), asia_mil_t: r1(s.m.get(a) / 1e3),
+      europa_var_pct: r1((e.m.get(a) / e.m.get(a - 1) - 1) * 100), asia_var_pct: r1((s.m.get(a) / s.m.get(a - 1) - 1) * 100) }];
+  }
+});
+
+dash.calc('aptidao_resumo', {
+  title: 'Resumo da aptidão de terras',
+  description: 'Área de pastagem com aptidão alta ou muito alta no total e na Amazônia e Mata Atlântica, em milhões de hectares.',
+  inputs: ['aptidao_bioma'],
+  fn: (aptidao) => {
+    const alta = (r) => r.classificacao_aptidao === 'Alto' || r.classificacao_aptidao === 'Muito Alto';
+    const soma = (f) => Math.round(aptidao.filter(f).reduce((s, r) => s + +r.area_ha, 0) / 1e5) / 10;
+    return [{
+      pasto_alta_mi_ha: soma((r) => r.classe_uso_solo === 'Pastagem' && alta(r)),
+      pasto_alta_amazonia_mi_ha: soma((r) => r.classe_uso_solo === 'Pastagem' && alta(r) && r.bioma === 'Amazônia'),
+      pasto_alta_mata_mi_ha: soma((r) => r.classe_uso_solo === 'Pastagem' && alta(r) && r.bioma === 'Mata Atlântica'),
+      floresta_alta_mi_ha: soma((r) => r.classe_uso_solo === 'Formação Florestal' && alta(r))
+    }];
+  }
+});
+
+dash.calc('top_municipios', {
+  title: 'Municípios com mais área apta',
+  description: 'Os 15 municípios com mais área de aptidão alta ou muito alta, no uso do solo e bioma escolhidos na página.',
+  inputs: ['municipios_aptidao'],
+  fn: (municipios) => {
+    const { uso = 'pasto', bioma = 'Todos' } = dash.params();
+    const r1 = (v) => Math.round(v / 100) / 10;
+    return municipios
+      .filter((r) => bioma === 'Todos' || r.bioma_predominante === bioma)
+      .map((r) => ({ cod_ibge: String(r.cod_ibge), municipio: r.municipio, uf: r.uf, bioma_predominante: r.bioma_predominante,
+        muito_alta_mil_ha: r1(+r[uso + '_muito_alta_ha'] || 0), alta_mil_ha: r1(+r[uso + '_alta_ha'] || 0),
+        total: (+r[uso + '_muito_alta_ha'] || 0) + (+r[uso + '_alta_ha'] || 0) }))
+      .filter((r) => r.total > 0)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 15);
+  }
+});
+
+dash.calc('comex_produtos', {
+  title: 'Comércio exterior por produto',
+  description: 'Valor FOB anual por produto e fluxo, em US$ milhões.',
+  inputs: ['comex_mensal'],
+  fn: (comex) => {
+    const by = new Map();
+    for (const r of comex) {
+      const k = r.ano + '|' + r.fluxo + '|' + r.produto;
+      if (!by.has(k)) by.set(k, { ano: +r.ano, fluxo: r.fluxo, produto: r.produto, fob: 0, t: 0 });
+      const o = by.get(k); o.fob += +r.fob_usd; o.t += +r.toneladas;
+    }
+    return [...by.values()].map((o) => ({ ano: o.ano, fluxo: o.fluxo, produto: o.produto,
+      fob_usd_mi: Math.round(o.fob / 1e5) / 10, mil_t: Math.round(o.t / 100) / 10 }));
+  }
+});
+
+dash.calc('comex_top_paises', {
+  title: 'Principais países no comércio de cacau',
+  description: 'Os 10 países com maior valor FOB no fluxo e ano escolhidos na página.',
+  inputs: ['comex_paises'],
+  fn: (paises) => {
+    const { fluxo = 'Exportação', ano_paises = '2025' } = dash.params();
+    const rows = paises.filter((r) => r.fluxo === fluxo && String(r.ano) === String(ano_paises));
+    const total = rows.reduce((s, r) => s + +r.fob_usd, 0);
+    return rows.map((r) => ({ pais: r.pais, fob_usd_mi: Math.round(+r.fob_usd / 1e5) / 10, toneladas: Math.round(+r.toneladas),
+        participacao_pct: total ? Math.round(+r.fob_usd / total * 1000) / 10 : null }))
+      .sort((a, b) => b.fob_usd_mi - a.fob_usd_mi).slice(0, 10);
+  }
+});
+
+dash.calc('credito_resumo', {
+  title: 'Resumo do crédito rural ao cacau',
+  description: 'Totais de 2025, participação do Pronaf, linha de sistemas agroflorestais e peso da operação de FGPP.',
+  inputs: ['credito_cacau'],
+  fn: (credito) => {
+    const soma = (rows, k) => rows.reduce((s, r) => s + (+r[k] || 0), 0);
+    const r1 = (v) => Math.round(v * 10) / 10;
+    const total = soma(credito, 'valor_reais');
+    const fgpp = credito.filter((r) => String(r.modalidade).startsWith('Fgpp'));
+    const contratos = soma(credito, 'contratos');
+    return [{
+      total_mi: r1(total / 1e6), contratos, area_mil_ha: r1(soma(credito, 'area_ha') / 1e3),
+      pronaf_contratos_pct: r1(soma(credito.filter((r) => r.programa === 'Pronaf'), 'contratos') / contratos * 100),
+      saf_mi: r1(soma(credito.filter((r) => r.linha === 'Floresta (sistemas agroflorestais)'), 'valor_reais') / 1e6),
+      fgpp_mi: r1(soma(fgpp, 'valor_reais') / 1e6), fgpp_pct: r1(soma(fgpp, 'valor_reais') / total * 100),
+      sem_fgpp_mi: r1((total - soma(fgpp, 'valor_reais')) / 1e6)
+    }];
+  }
+});
+
+dash.calc('credito_uf', {
+  title: 'Crédito ao cacau por estado',
+  description: 'Valor contratado em 2025 por estado e finalidade, em R$ milhões, com ou sem a operação de FGPP conforme a página.',
+  inputs: ['credito_cacau'],
+  fn: (credito) => {
+    const { fgpp = 'com' } = dash.params();
+    const by = new Map();
+    credito.filter((r) => fgpp === 'com' || !String(r.modalidade).startsWith('Fgpp')).forEach((r) => {
+      if (!by.has(r.uf)) by.set(r.uf, { uf: r.uf, Investimento: 0, Custeio: 0, 'Comercialização': 0, 'Industrialização': 0, contratos: 0 });
+      const o = by.get(r.uf); o[r.finalidade] = (o[r.finalidade] || 0) + +r.valor_reais / 1e6; o.contratos += +r.contratos;
+    });
+    return [...by.values()].map((o) => ({ ...o, total_mi: Math.round((o.Investimento + o.Custeio + o['Comercialização'] + o['Industrialização']) * 10) / 10 }))
+      .sort((a, b) => b.total_mi - a.total_mi);
+  }
+});
+
+dash.calc('credito_linha', {
+  title: 'Crédito ao cacau por programa e linha',
+  description: 'Valor, contratos e área financiada em 2025 por programa e linha de crédito.',
+  inputs: ['credito_cacau'],
+  fn: (credito) => {
+    const { fgpp = 'com' } = dash.params();
+    const by = new Map();
+    credito.filter((r) => fgpp === 'com' || !String(r.modalidade).startsWith('Fgpp')).forEach((r) => {
+      const nome = r.linha === 'Sem linha' ? r.programa : r.programa + ' · ' + r.linha;
+      if (!by.has(nome)) by.set(nome, { linha: nome, valor: 0, contratos: 0, area_ha: 0 });
+      const o = by.get(nome); o.valor += +r.valor_reais; o.contratos += +r.contratos; o.area_ha += +r.area_ha || 0;
+    });
+    return [...by.values()].map((o) => ({ linha: o.linha, valor_mi: Math.round(o.valor / 1e5) / 10, contratos: o.contratos, area_ha: Math.round(o.area_ha) }))
+      .sort((a, b) => b.valor_mi - a.valor_mi);
+  }
+});
+
+dash.calc('credito_ifs', {
+  title: 'Instituições financeiras no crédito ao cacau',
+  description: 'As oito instituições com maior valor contratado para o cacau em 2025.',
+  inputs: ['credito_cacau'],
+  fn: (credito) => {
+    const { fgpp = 'com' } = dash.params();
+    const by = new Map();
+    credito.filter((r) => fgpp === 'com' || !String(r.modalidade).startsWith('Fgpp')).forEach((r) => {
+      if (!by.has(r.cnpj_if)) by.set(r.cnpj_if, { cnpj_if: r.cnpj_if, instituicao: r.instituicao || r.cnpj_if, segmento_if: r.segmento_if || '—', valor: 0, contratos: 0 });
+      const o = by.get(r.cnpj_if); o.valor += +r.valor_reais; o.contratos += +r.contratos;
+    });
+    return [...by.values()].sort((a, b) => b.valor - a.valor).slice(0, 8)
+      .map((o) => ({ cnpj_if: o.cnpj_if, instituicao: o.instituicao, segmento_if: o.segmento_if, valor_mi: Math.round(o.valor / 1e5) / 10, contratos: o.contratos }));
+  }
+});
+
+dash.calc('tend_destaques', {
+  title: 'Indicadores do mês (Tendências)',
+  description: 'Último dado de chegadas na Costa do Marfim, moagem Europa + Ásia, recebimento AIPC e chance de El Niño forte.',
+  inputs: ['civ_chegadas', 'moagem_europa', 'moagem_asia', 'aipc_trimestral', 'enso_probabilidades'],
+  fn: (civ, europa, asia, aipc, enso) => {
+    const r1 = (v) => Math.round(v * 10) / 10;
+    const acum = civ.filter((r) => String(r.medida).startsWith('Acumulado')).sort((a, b) => (a.data_ref < b.data_ref ? -1 : 1));
+    const c = acum[acum.length - 1];
+    const key = (r) => +r.ano * 10 + +String(r.trimestre).replace('Q', '');
+    const tot = new Map();
+    [...europa, ...asia].forEach((r) => { const k = key(r); tot.set(k, (tot.get(k) || 0) + +r.toneladas); });
+    const ue = Math.max(...europa.map(key)), ua = Math.max(...asia.map(key));
+    const ult = Math.min(ue, ua);
+    const ap = aipc.slice().sort((a, b) => a.ano * 10 + a.trimestre - (b.ano * 10 + b.trimestre));
+    const al = ap[ap.length - 1];
+    const aa = ap.find((r) => r.ano === al.ano - 1 && r.trimestre === al.trimestre);
+    const jfm = enso.find((r) => r.temporada === 'JFM') || enso[0];
+    return [{
+      civ_data: c.data_ref, civ_acum_mil_t: r1(c.safra_2026_27_t / 1e3), civ_var_pct: c.var_pct,
+      moagem_periodo: Math.floor(ult / 10) + ' T' + (ult % 10), moagem_mil_t: r1(tot.get(ult) / 1e3), moagem_var_pct: r1((tot.get(ult) / tot.get(ult - 10) - 1) * 100),
+      aipc_periodo: al.trimestre + 'º tri/' + al.ano, aipc_mil_t: r1(al.recebimento_t / 1e3), aipc_var_pct: aa ? r1((al.recebimento_t / aa.recebimento_t - 1) * 100) : null,
+      aipc_moagem_mil_t: al.moagem_t != null ? r1(al.moagem_t / 1e3) : null,
+      enso_meses: jfm.meses, enso_forte_pct: jfm.forte_pct + jfm.muito_forte_pct
+    }];
+  }
+});
+
+dash.calc('producao_mun_top', {
+  title: 'Maiores municípios produtores de cacau',
+  description: 'Os 15 municípios com maior valor no indicador e estado escolhidos no mapa (PAM 2025); em produtividade, só municípios com 100 ha ou mais.',
+  inputs: ['producao_municipal'],
+  fn: (rows) => {
+    const { metrica_mun = 'toneladas', uf_mun = 'BR' } = dash.params();
+    const esc = rows.filter((r) => uf_mun === 'BR' || r.uf === uf_mun);
+    const base = metrica_mun === 'kg_ha' ? 'toneladas' : metrica_mun;
+    const tot = esc.reduce((s, r) => s + (+r[base] || 0), 0);
+    return esc.filter((r) => r[metrica_mun] != null && (metrica_mun !== 'kg_ha' || +r.area_ha >= 100))
+      .sort((a, b) => +b[metrica_mun] - +a[metrica_mun]).slice(0, 15)
+      .map((r) => ({ cod_ibge: String(r.cod_ibge), municipio: r.municipio, uf: r.uf, indicador: metrica_mun,
+        valor_indicador: metrica_mun === 'valor_mil_reais' ? Math.round(+r.valor_mil_reais / 100) / 10 : +r[metrica_mun],
+        participacao_pct: tot ? Math.round(+r[base] / tot * 1000) / 10 : null }));
+  }
+});
+</script>
+
+<script>
+/* ---------- Utilitários de desenho ---------- */
+window.OC = (function () {
+  const L = d3.formatLocale({ decimal: ',', thousands: '.', grouping: [3], currency: ['US$ ', ''] });
+  const f = { int: L.format(',.0f'), d1: L.format(',.1f'), d2: L.format(',.2f') };
+  const sign = (v) => (v > 0 ? '+' : v < 0 ? '−' : '');
+  const fmt = (v, kind) => {
+    if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '—';
+    switch (kind) {
+      case 'ano': case 'txt': return String(v);
+      case 'int': return f.int(+v);
+      case 'd1': return f.d1(+v);
+      case 'p1': return f.d1(+v) + '%';
+      case 'pct': return sign(+v) + f.d1(Math.abs(+v)) + '%';
+      case 'sd1': return sign(+v) + f.d1(Math.abs(+v));
+      case 'mesano': { const M = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro']; const t = String(v); return M[+t.slice(5, 7) - 1] + ' de ' + t.slice(0, 4); }
+      case 'data': { const t = String(v); return t.slice(8, 10) + '/' + t.slice(5, 7) + '/' + t.slice(0, 4); }
+      case 'dm': { const t = String(v); return t.slice(8, 10) + '/' + t.slice(5, 7); }
+      default: return String(v);
+    }
+  };
+  const colors = () => dash.colors;
+  const C = (i) => dash.colors[i % dash.colors.length];
+  const BIOMA = { 'Mata Atlântica': 0, 'Cerrado': 1, 'Amazônia': 2, 'Pantanal': 3, 'Caatinga': 4, 'Pampa': 5 };
+  const biomaColor = (b) => (b in BIOMA ? C(BIOMA[b]) : 'var(--cds-chart-muted)');
+
+  function status(ids) {
+    const s = ids.map((id) => dash.data(id).status);
+    if (s.every((x) => x === 'ok')) return 'ok';
+    if (s.some((x) => x === 'error' || x === 'missing')) return 'error';
+    if (s.some((x) => x === 'loading')) return 'loading';
+    return s.find((x) => x !== 'ok');
+  }
+  function rows(id) { const d = dash.data(id); return d.status === 'ok' && Array.isArray(d.data) ? d.data : []; }
+  function placeholder(el, s) {
+    el.replaceChildren();
+    el.classList.toggle('dash-skeleton', s === 'loading');
+    if (s === 'error') { const p = document.createElement('p'); p.className = 'oc-fail'; p.textContent = 'Falha ao carregar'; el.append(p); }
+  }
+  function legend(el, items) {
+    const d = document.createElement('div'); d.className = 'oc-legend';
+    items.forEach((it) => {
+      const s = document.createElement('span'); const i = document.createElement('i');
+      if (it.line) i.className = 'line';
+      i.style.background = it.color; s.append(i, document.createTextNode(it.name)); d.append(s);
+    });
+    el.append(d); return d;
+  }
+  function tooltip(el) {
+    const t = document.createElement('div'); t.className = 'oc-tip'; t.hidden = true; el.append(t);
+    return {
+      show(ev, title, lines) {
+        t.replaceChildren();
+        const h = document.createElement('strong'); h.textContent = title; t.append(h);
+        lines.forEach(([k, v, c]) => {
+          const r = document.createElement('div'); r.className = 'row';
+          const a = document.createElement('span'); a.textContent = k;
+          if (c) { a.style.borderLeft = '8px solid'; a.style.borderLeftColor = c; a.style.paddingLeft = '5px'; }
+          const b = document.createElement('b'); b.textContent = v; r.append(a, b); t.append(r);
+        });
+        t.hidden = false;
+        const box = el.getBoundingClientRect();
+        let x = ev.clientX - box.left + 14, y = ev.clientY - box.top + 14;
+        const w = t.offsetWidth, h2 = t.offsetHeight;
+        if (x + w > box.width) x = Math.max(0, ev.clientX - box.left - w - 14);
+        if (y + h2 > box.height) y = Math.max(0, box.height - h2);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; }
+    };
+  }
+  function textWidth(svg, strings) {
+    const g = svg.append('g').attr('class', 'oc-axis');
+    let m = 0;
+    strings.forEach((s) => { m = Math.max(m, g.append('text').text(s).node().getComputedTextLength()); });
+    g.remove(); return m;
+  }
+  function makeSvg(el, height, label) {
+    const width = Math.max(260, Math.floor(el.clientWidth || 600));
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('role', 'img').attr('aria-label', label);
+    return { svg, width, height };
+  }
+
+  /* Linhas: series [{name, color, points:[{x, y}]}], x numérico ou Date */
+  function lineChart(el, o) {
+    el.replaceChildren(); el.classList.remove('dash-skeleton');
+    if (o.legend !== false) legend(el, o.series.map((s) => ({ name: s.name, color: s.color, line: true })));
+    const tip = tooltip(el);
+    const height = o.height || 280;
+    const { svg, width } = makeSvg(el, height, o.label);
+    const all = o.series.flatMap((s) => s.points.filter((p) => p.y != null && !isNaN(p.y)));
+    const xs = [...new Set(all.map((p) => +p.x))].sort((a, b) => a - b);
+    const yMax = d3.max(all, (p) => p.y) || 1;
+    const yMin = o.zero === false ? d3.min(all, (p) => p.y) : 0;
+    const y0 = d3.scaleLinear().domain([yMin, yMax]).nice(5);
+    const ticks = y0.ticks(5);
+    const ml = Math.ceil(textWidth(svg, ticks.map(o.yFmt))) + 10;
+    const m = { t: 8, r: 12, b: 26, l: ml };
+    const x = (o.time ? d3.scaleUtc() : d3.scaleLinear()).domain(d3.extent(xs)).range([m.l, width - m.r]);
+    const y = y0.range([height - m.b, m.t]);
+    svg.append('g').attr('class', 'oc-grid-y').attr('transform', `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickValues(ticks).tickFormat(o.yFmt).tickSize(-(width - m.l - m.r)))
+      .call((g) => g.selectAll('.tick line').attr('stroke-opacity', 1));
+    const nx = Math.max(2, Math.floor((width - m.l - m.r) / (o.time ? 70 : 46)));
+    const xAxis = d3.axisBottom(x).ticks(nx).tickSizeOuter(0);
+    if (o.xFmt) xAxis.tickFormat(o.xFmt);
+    if (!o.time) xAxis.tickValues(xs.filter((v, i) => i % Math.ceil(xs.length / nx) === 0 || i === xs.length - 1)).tickFormat(o.xFmt || d3.format('d'));
+    if (o.xTicks) { const xt = o.xTicks.filter((v, i) => i % Math.ceil(o.xTicks.length / nx) === 0); xAxis.tickValues(xt); }
+    svg.append('g').attr('transform', `translate(0,${height - m.b})`).call(xAxis);
+    const line = d3.line().defined((p) => p.y != null && !isNaN(p.y)).x((p) => x(+p.x)).y((p) => y(p.y));
+    o.series.forEach((s) => {
+      svg.append('path').datum(s.points).attr('fill', 'none').style('stroke', s.color)
+        .attr('stroke-width', s.width || 2.2).attr('stroke-dasharray', s.dash || null).attr('d', line);
+      if (!o.time) svg.append('g').selectAll('circle').data(s.points.filter((p) => p.y != null && !isNaN(p.y))).join('circle')
+        .attr('cx', (p) => x(+p.x)).attr('cy', (p) => y(p.y)).attr('r', 2.6).style('fill', s.color);
+    });
+    const rule = svg.append('line').attr('y1', m.t).attr('y2', height - m.b).style('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', width - m.l - m.r).attr('height', height - m.t - m.b)
+      .attr('fill', 'transparent')
+      .on('pointermove', (ev) => {
+        const [px] = d3.pointer(ev);
+        const xv = x.invert(px);
+        const near = xs.reduce((a, b) => (Math.abs(b - xv) < Math.abs(a - xv) ? b : a));
+        rule.attr('x1', x(near)).attr('x2', x(near)).attr('opacity', 1);
+        const lines = o.series.map((s) => { const p = s.points.find((q) => +q.x === near); return [s.name, p && p.y != null ? o.tipFmt(p.y) : '—', s.color]; });
+        tip.show(ev, o.tipTitle(near), lines);
+      })
+      .on('pointerleave', () => { rule.attr('opacity', 0); tip.hide(); });
+  }
+
+  /* Barras verticais: cats [], keys [{key, name, color}], get(cat, key) */
+  function barChart(el, o) {
+    el.replaceChildren(); el.classList.remove('dash-skeleton');
+    if (o.keys.length > 1 || o.showLegend) legend(el, o.keys.map((k) => ({ name: k.name, color: k.color })));
+    const tip = tooltip(el);
+    const height = o.height || 280;
+    const { svg, width } = makeSvg(el, height, o.label);
+    const vals = o.cats.flatMap((c) => (o.stacked ? [d3.sum(o.keys, (k) => Math.max(0, o.get(c, k.key) || 0))] : o.keys.map((k) => o.get(c, k.key) || 0)));
+    const lo = Math.min(0, d3.min(vals)), hi = Math.max(0, d3.max(vals));
+    const y0 = d3.scaleLinear().domain([lo, hi]).nice(5);
+    const ticks = y0.ticks(5);
+    const ml = Math.ceil(textWidth(svg, ticks.map(o.yFmt))) + 10;
+    const m = { t: 10, r: 8, b: 26, l: ml };
+    const x = d3.scaleBand().domain(o.cats).range([m.l, width - m.r]).padding(0.22);
+    const y = y0.range([height - m.b, m.t]);
+    svg.append('g').attr('class', 'oc-grid-y').attr('transform', `translate(${m.l},0)`)
+      .call(d3.axisLeft(y).tickValues(ticks).tickFormat(o.yFmt).tickSize(-(width - m.l - m.r)));
+    svg.append('g').attr('transform', `translate(0,${y(0)})`).call(d3.axisBottom(x).tickSize(0).tickFormat(o.catFmt || String))
+      .call((g) => g.selectAll('text').attr('dy', '1em').attr('transform', `translate(0,${height - m.b - y(0)})`));
+    const xi = d3.scaleBand().domain(o.keys.map((k) => k.key)).range([0, x.bandwidth()]).padding(0.08);
+    o.cats.forEach((c) => {
+      let acc = 0;
+      const g = svg.append('g');
+      o.keys.forEach((k) => {
+        const v = o.get(c, k.key) || 0;
+        let bx, bw, by, bh;
+        if (o.stacked) { bx = x(c); bw = x.bandwidth(); by = y(acc + v); bh = y(acc) - y(acc + v); acc += v; }
+        else { bx = x(c) + xi(k.key); bw = xi.bandwidth(); by = y(Math.max(0, v)); bh = Math.abs(y(v) - y(0)); }
+        g.append('rect').attr('x', bx).attr('y', by).attr('width', bw).attr('height', Math.max(0, bh))
+          .style('fill', k.color).attr('opacity', o.partial && o.partial(c) ? 0.55 : 1);
+      });
+      g.append('rect').attr('x', x(c) - x.step() * x.paddingInner() / 2).attr('y', m.t).attr('width', x.step()).attr('height', height - m.t - m.b)
+        .attr('fill', 'transparent')
+        .on('pointermove', (ev) => tip.show(ev, o.tipTitle ? o.tipTitle(c) : String(c), o.tipLines(c)))
+        .on('pointerleave', () => tip.hide());
+    });
+  }
+
+  /* Barras horizontais: items [{label, values:{key:v}}], keys [{key,name,color}] */
+  function hbarChart(el, o) {
+    el.replaceChildren(); el.classList.remove('dash-skeleton');
+    if (o.keys.length > 1) legend(el, o.keys.map((k) => ({ name: k.name, color: k.color })));
+    const tip = tooltip(el);
+    const rowH = o.rowH || 26;
+    const height = o.items.length * rowH + 10;
+    const width = Math.max(260, Math.floor(el.clientWidth || 600));
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('role', 'img').attr('aria-label', o.label);
+    const totals = o.items.map((it) => d3.sum(o.keys, (k) => it.values[k.key] || 0));
+    const lw = Math.min(width * 0.42, Math.ceil(textWidth(svg, o.items.map((it) => it.label))) + 10);
+    const vw = Math.ceil(textWidth(svg, totals.map(o.xFmt))) + 8;
+    const x = d3.scaleLinear().domain([0, d3.max(totals) || 1]).range([lw, width - vw]);
+    o.items.forEach((it, i) => {
+      const yy = i * rowH + 4;
+      const g = svg.append('g');
+      g.append('text').attr('class', 'oc-label').attr('x', lw - 8).attr('y', yy + rowH / 2).attr('dy', '0.32em').attr('text-anchor', 'end')
+        .text(it.label.length > 34 ? it.label.slice(0, 32) + '…' : it.label);
+      let acc = 0;
+      o.keys.forEach((k) => {
+        const v = it.values[k.key] || 0;
+        g.append('rect').attr('x', x(acc)).attr('y', yy + 3).attr('height', rowH - 8).attr('width', Math.max(0, x(acc + v) - x(acc))).style('fill', k.color);
+        acc += v;
+      });
+      g.append('text').attr('class', 'oc-label').attr('x', x(acc) + 5).attr('y', yy + rowH / 2).attr('dy', '0.32em').text(o.xFmt(totals[i]));
+      g.append('rect').attr('x', 0).attr('y', yy).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+        .on('pointermove', (ev) => tip.show(ev, it.label, o.tipLines(it)))
+        .on('pointerleave', () => tip.hide());
+    });
+  }
+
+  return { fmt, C, colors, biomaColor, BIOMA, status, rows, placeholder, legend, tooltip, textWidth, lineChart, barChart, hbarChart };
+})();
+</script>
+
+<script>
+/* ---------- Números no texto ---------- */
+dash.draw('v', (el) => {
+  const src = el.getAttribute('data-source');
+  const d = dash.data(src);
+  if (d.status !== 'ok' || !Array.isArray(d.data) || !d.data.length) {
+    el.textContent = '—';
+    el.classList.toggle('dash-skeleton', d.status === 'loading');
+    return;
+  }
+  let row = d.data[0];
+  const where = el.getAttribute('data-where');
+  if (where) {
+    const [k, v] = where.split('=').map(decodeURIComponent);
+    row = d.data.find((r) => String(r[k]) === v);
+  }
+  el.classList.remove('dash-skeleton');
+  el.textContent = row ? OC.fmt(row[el.getAttribute('data-field')], el.getAttribute('data-fmt')) : '—';
+});
+
+dash.draw('delta', (el) => {
+  const d = dash.data(el.getAttribute('data-source'));
+  if (d.status !== 'ok' || !d.data || !d.data.length) { el.textContent = '—'; return; }
+  const v = d.data[0][el.getAttribute('data-field')];
+  el.textContent = OC.fmt(v, 'pct');
+  const good = el.getAttribute('data-good');
+  el.classList.remove('oc-good', 'oc-bad', 'oc-neutral');
+  if (good === 'none' || v == null || v === 0) el.classList.add('oc-neutral');
+  else el.classList.add((v > 0) === (good === 'up') ? 'oc-good' : 'oc-bad');
+});
+
+/* ---------- Produção ---------- */
+dash.draw('chart_producao', (el) => {
+  const s = OC.status(['producao_estados']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('producao_estados');
+  const met = dash.params().metrica || 'toneladas';
+  const grupos = ['Pará', 'Bahia', 'Espírito Santo', 'Rondônia', 'Demais estados'];
+  const cor = { 'Pará': OC.C(2), 'Bahia': OC.C(0), 'Espírito Santo': OC.C(1), 'Rondônia': OC.C(3), 'Demais estados': 'var(--cds-chart-muted)' };
+  const unid = { toneladas: ' t', area_ha: ' ha', kg_ha: ' kg/ha' }[met];
+  const curto = (v) => (met === 'kg_ha' ? OC.fmt(v, 'int') : OC.fmt(v / 1000, 'int') + ' mil');
+  OC.lineChart(el, {
+    label: 'Linhas da produção de cacau por estado desde 2009',
+    series: grupos.map((g) => ({ name: g, color: cor[g], points: rows.filter((r) => r.grupo === g).map((r) => ({ x: r.ano, y: r[met] })) })),
+    yFmt: curto, tipFmt: (v) => OC.fmt(v, 'int') + unid, tipTitle: (a) => String(a), height: 440
+  });
+});
+
+dash.draw('tab_producao', (el) => {
+  el.replaceChildren();
+  if (dash.data('producao_ultimo_ano').status !== 'ok') return;
+  OC.rows('producao_ultimo_ano').forEach((r) => {
+    const tr = document.createElement('tr');
+    [[r.estado, ''], [OC.fmt(r.toneladas, 'int'), 'r'], [OC.fmt(r.area_ha, 'int'), 'r'], [OC.fmt(r.kg_ha, 'int'), 'r']].forEach(([t, c]) => {
+      const td = document.createElement('td'); td.textContent = t; if (c) td.className = c; tr.append(td);
+    });
+    el.append(tr);
+  });
+});
+
+dash.draw('chart_ibge_aipc', (el) => {
+  const s = OC.status(['ibge_aipc']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('ibge_aipc');
+  OC.barChart(el, {
+    label: 'Barras comparando produção do IBGE e recebimentos da AIPC por ano',
+    cats: rows.map((r) => r.ano),
+    keys: [{ key: 'producao_mil_t', name: 'Produção (IBGE)', color: OC.C(0) }, { key: 'recebimentos_mil_t', name: 'Recebimentos (AIPC)', color: OC.C(1) }],
+    get: (c, k) => (rows.find((r) => r.ano === c) || {})[k],
+    yFmt: (v) => OC.fmt(v, 'int'),
+    tipLines: (c) => { const r = rows.find((x) => x.ano === c); return [['Produção (IBGE)', OC.fmt(r.producao_mil_t, 'd1') + ' mil t', OC.C(0)], ['Recebimentos (AIPC)', OC.fmt(r.recebimentos_mil_t, 'd1') + ' mil t', OC.C(1)]]; }
+  });
+});
+
+dash.draw('chart_receb_uf', (el) => {
+  const s = OC.status(['recebimentos_uf_aipc']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('recebimentos_uf_aipc');
+  const anos = [...new Set(rows.map((r) => +r.ano))].sort();
+  const ufs = ['Bahia', 'Pará', 'Espírito Santo', 'Rondônia', 'Outros'];
+  const cor = { 'Bahia': OC.C(0), 'Pará': OC.C(2), 'Espírito Santo': OC.C(1), 'Rondônia': OC.C(3), 'Outros': 'var(--cds-chart-muted)' };
+  const ult = Math.max(...anos);
+  const get = (a, u) => { const r = rows.find((x) => +x.ano === a && x.estado === u); return r ? +r.valores : 0; };
+  OC.barChart(el, {
+    label: 'Barras empilhadas dos recebimentos de cacau por estado de origem',
+    cats: anos, stacked: true,
+    keys: ufs.map((u) => ({ key: u, name: u, color: cor[u] })),
+    get, catFmt: (a) => (a === ult ? a + '*' : String(a)), partial: (a) => a === ult,
+    yFmt: (v) => OC.fmt(v / 1000, 'int') + ' mil',
+    tipTitle: (a) => (a === ult ? a + ' (parcial)' : String(a)),
+    tipLines: (a) => ufs.map((u) => [u, OC.fmt(get(a, u), 'int') + ' t', cor[u]]).concat([['Total', OC.fmt(d3.sum(ufs, (u) => get(a, u)), 'int') + ' t']])
+  });
+});
+
+/* ---------- Território ---------- */
+dash.draw('mapa', (el) => {
+  const s = OC.status(['municipios_aptidao']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const all = OC.rows('municipios_aptidao').filter((r) => r.lat != null && r.lon != null);
+  const { uso = 'pasto', bioma = 'Todos' } = dash.params();
+  const val = (r) => (+r[uso + '_muito_alta_ha'] || 0) + (+r[uso + '_alta_ha'] || 0);
+  el.replaceChildren(); el.classList.remove('dash-skeleton');
+  OC.legend(el, Object.keys(OC.BIOMA).map((b) => ({ name: b, color: OC.biomaColor(b) })));
+  const tip = OC.tooltip(el);
+  const width = Math.max(260, Math.floor(el.clientWidth || 600));
+  const mp = { type: 'MultiPoint', coordinates: all.map((r) => [+r.lon, +r.lat]) };
+  const proj = d3.geoMercator().fitWidth(width - 20, mp);
+  const bb = d3.geoPath(proj).bounds(mp);
+  proj.translate([proj.translate()[0] + 10 - bb[0][0], proj.translate()[1] + 10 - bb[0][1]]);
+  const height = Math.ceil(bb[1][1] - bb[0][1] + 20);
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`)
+    .attr('role', 'img').attr('aria-label', 'Mapa de pontos dos municípios brasileiros com área apta ao cacau');
+  svg.append('g').selectAll('circle').data(all).join('circle')
+    .attr('cx', (r) => proj([+r.lon, +r.lat])[0]).attr('cy', (r) => proj([+r.lon, +r.lat])[1])
+    .attr('r', width < 500 ? 0.8 : 1.1).style('fill', 'var(--cds-chart-muted)').attr('opacity', 0.55);
+  const pts = all.map((r) => ({ r, v: val(r), on: bioma === 'Todos' || r.bioma_predominante === bioma })).filter((p) => p.v > 0)
+    .sort((a, b) => b.v - a.v);
+  const maxV = d3.max(pts, (p) => p.v) || 1;
+  const rScale = d3.scaleSqrt().domain([0, maxV]).range([0, Math.max(7, width / 42)]);
+  pts.forEach((p) => { const [x, y] = proj([+p.r.lon, +p.r.lat]); p.x = x; p.y = y; });
+  svg.append('g').selectAll('circle').data(pts).join('circle')
+    .attr('cx', (p) => p.x).attr('cy', (p) => p.y).attr('r', (p) => Math.max(0.8, rScale(p.v)))
+    .style('fill', (p) => OC.biomaColor(p.r.bioma_predominante))
+    .attr('fill-opacity', (p) => (p.on ? 0.62 : 0.08))
+    .style('stroke', 'var(--color-panel)').attr('stroke-width', 0.4).attr('stroke-opacity', (p) => (p.on ? 1 : 0));
+  // legenda de tamanho
+  const lv = [maxV / 10, maxV / 2, maxV].map((v) => Math.round(v / 1000) * 1000).filter((v) => v > 0);
+  const sz = document.createElement('div'); sz.className = 'oc-legend';
+  lv.forEach((v) => {
+    const s = document.createElement('span'); const i = document.createElement('i');
+    const d = Math.max(4, Math.round(rScale(v) * 2));
+    i.style.width = d + 'px'; i.style.height = d + 'px'; i.style.border = '1px solid var(--cds-chart-axis)'; i.style.background = 'transparent';
+    s.append(i, document.createTextNode(OC.fmt(v / 1000, 'int') + ' mil ha')); sz.append(s);
+  });
+  el.append(sz);
+  const vis = pts.filter((p) => p.on);
+  const del = vis.length ? d3.Delaunay.from(vis, (p) => p.x, (p) => p.y) : null;
+  const usoNome = uso === 'pasto' ? 'Pastagem' : 'Formação florestal';
+  svg.append('rect').attr('width', width).attr('height', height).attr('fill', 'transparent')
+    .on('pointermove', (ev) => {
+      if (!del) return;
+      const [mx, my] = d3.pointer(ev);
+      const p = vis[del.find(mx, my)];
+      if (!p || Math.hypot(p.x - mx, p.y - my) > Math.max(14, rScale(p.v) + 4)) return tip.hide();
+      tip.show(ev, p.r.municipio + ' (' + p.r.uf + ')', [
+        ['Bioma predominante', p.r.bioma_predominante],
+        [usoNome + ', muito alta', OC.fmt(+p.r[uso + '_muito_alta_ha'], 'int') + ' ha'],
+        [usoNome + ', alta', OC.fmt(+p.r[uso + '_alta_ha'], 'int') + ' ha'],
+        [usoNome + ', média', OC.fmt(+p.r[uso + '_media_ha'], 'int') + ' ha']
+      ]);
+    })
+    .on('pointerleave', () => tip.hide());
+});
+
+dash.draw('chart_bioma', (el) => {
+  const s = OC.status(['aptidao_bioma']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('aptidao_bioma');
+  const { uso = 'pasto', bioma = 'Todos' } = dash.params();
+  const classe = uso === 'pasto' ? 'Pastagem' : 'Formação Florestal';
+  const classes = [['Muito Alto', 'Muito alta', OC.C(2)], ['Alto', 'Alta', OC.C(5)], ['Médio', 'Média', 'var(--cds-chart-muted)']];
+  const biomas = [...new Set(rows.map((r) => r.bioma))];
+  const items = biomas.map((b) => {
+    const values = {};
+    classes.forEach(([k]) => { values[k] = d3.sum(rows.filter((r) => r.bioma === b && r.classe_uso_solo === classe && r.classificacao_aptidao === k), (r) => +r.area_ha) / 1e6; });
+    return { label: b, values };
+  }).filter((it) => bioma === 'Todos' || it.label === bioma)
+    .sort((a, b) => d3.sum(Object.values(b.values)) - d3.sum(Object.values(a.values)));
+  OC.hbarChart(el, {
+    label: 'Barras de área apta ao cacau por bioma e classe de aptidão',
+    items, keys: classes.map(([k, n, c]) => ({ key: k, name: n, color: c })),
+    xFmt: (v) => OC.fmt(v, 'd1'),
+    tipLines: (it) => classes.map(([k, n, c]) => [n, OC.fmt(it.values[k], 'd2') + ' mi ha', c])
+  });
+});
+
+dash.draw('tab_municipios', (el) => {
+  el.replaceChildren();
+  if (dash.data('top_municipios').status !== 'ok') return;
+  OC.rows('top_municipios').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.cod_ibge);
+    [[r.municipio, ''], [r.uf, ''], [OC.fmt(r.muito_alta_mil_ha, 'd1'), 'r'], [OC.fmt(r.alta_mil_ha, 'd1'), 'r']].forEach(([t, c]) => {
+      const td = document.createElement('td'); td.textContent = t; if (c) td.className = c; tr.append(td);
+    });
+    el.append(tr);
+  });
+});
+
+/* ---------- Indústria ---------- */
+dash.draw('chart_industria', (el) => {
+  const s = OC.status(['industria']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('industria');
+  const ser = [['recebimentos_mil_t', 'Recebimentos', OC.C(1)], ['moagem_mil_t', 'Moagem', OC.C(0)], ['importacao_amendoa_mil_t', 'Importação de amêndoas', OC.C(4)]];
+  OC.lineChart(el, {
+    label: 'Linhas de recebimentos, moagem e importação de amêndoas por ano',
+    series: ser.map(([k, n, c]) => ({ name: n, color: c, dash: k.startsWith('importacao') ? '4 3' : null, points: rows.map((r) => ({ x: r.ano, y: r[k] })) })),
+    yFmt: (v) => OC.fmt(v, 'int'), tipFmt: (v) => OC.fmt(v, 'd1') + ' mil t', tipTitle: (a) => String(a)
+  });
+});
+
+dash.draw('chart_derivados', (el) => {
+  const s = OC.status(['derivados_aipc']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('derivados_aipc');
+  const prods = ['Pó de cacau', 'Manteiga de cacau', 'Liquor', 'Torta de cacau'];
+  const cor = [OC.C(0), OC.C(1), OC.C(3), 'var(--cds-chart-muted)'];
+  OC.lineChart(el, {
+    label: 'Linhas da produção de derivados de cacau por ano',
+    series: prods.map((p, i) => ({ name: p, color: cor[i], points: rows.filter((r) => r.produto === p).map((r) => ({ x: +r.ano, y: +r.valores / 1000 })) })),
+    yFmt: (v) => OC.fmt(v, 'int'), tipFmt: (v) => OC.fmt(v, 'd1') + ' mil t', tipTitle: (a) => String(a)
+  });
+});
+
+/* ---------- Comércio exterior ---------- */
+dash.draw('chart_balanca', (el) => {
+  const s = OC.status(['balanca_anual']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('balanca_anual');
+  const parc = (a) => (rows.find((r) => r.ano === a) || {}).meses < 12;
+  OC.barChart(el, {
+    label: 'Barras de exportação, importação e saldo comercial de cacau por ano', height: 300,
+    cats: rows.map((r) => r.ano),
+    keys: [{ key: 'exportacao_usd_mi', name: 'Exportação', color: OC.C(2) }, { key: 'importacao_usd_mi', name: 'Importação', color: OC.C(1) }, { key: 'saldo_usd_mi', name: 'Saldo', color: 'var(--cds-chart-muted)' }],
+    get: (c, k) => (rows.find((r) => r.ano === c) || {})[k],
+    catFmt: (a) => (parc(a) ? a + '*' : String(a)), partial: parc,
+    yFmt: (v) => OC.fmt(v, 'int'),
+    tipTitle: (a) => (parc(a) ? a + ' (jan–jul)' : String(a)),
+    tipLines: (c) => { const r = rows.find((x) => x.ano === c); return [['Exportação', 'US$ ' + OC.fmt(r.exportacao_usd_mi, 'd1') + ' mi', OC.C(2)], ['Importação', 'US$ ' + OC.fmt(r.importacao_usd_mi, 'd1') + ' mi', OC.C(1)], ['Saldo', 'US$ ' + OC.fmt(r.saldo_usd_mi, 'sd1') + ' mi']]; }
+  });
+});
+
+dash.draw('chart_produtos', (el) => {
+  const s = OC.status(['comex_produtos']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const fluxo = dash.params().fluxo || 'Exportação';
+  const rows = OC.rows('comex_produtos').filter((r) => r.fluxo === fluxo);
+  const anos = [...new Set(rows.map((r) => r.ano))].sort();
+  const prods = ['Cacau bruto', 'Pasta de cacau', 'Manteiga de cacau', 'Cacau em pó', 'Chocolate e preparações de cacau', 'Resíduos de cacau'];
+  const nome = { 'Chocolate e preparações de cacau': 'Chocolate e preparações', 'Cacau bruto': 'Cacau em amêndoa' };
+  const cores = [OC.C(2), OC.C(4), OC.C(1), OC.C(0), OC.C(3), 'var(--cds-chart-muted)'];
+  const get = (a, p) => { const r = rows.find((x) => x.ano === a && x.produto === p); return r ? r.fob_usd_mi : 0; };
+  const ult = Math.max(...anos);
+  OC.barChart(el, {
+    label: 'Barras empilhadas do comércio exterior de cacau por produto e ano', stacked: true, height: 300,
+    cats: anos, keys: prods.map((p, i) => ({ key: p, name: nome[p] || p, color: cores[i] })),
+    get, catFmt: (a) => (a === ult ? a + '*' : String(a)), partial: (a) => a === ult,
+    yFmt: (v) => OC.fmt(v, 'int'),
+    tipTitle: (a) => (a === ult ? a + ' (jan–jul)' : String(a)),
+    tipLines: (a) => prods.map((p, i) => [nome[p] || p, 'US$ ' + OC.fmt(get(a, p), 'd1') + ' mi', cores[i]])
+  });
+});
+
+dash.draw('chart_paises', (el) => {
+  const s = OC.status(['comex_top_paises']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('comex_top_paises');
+  const fluxo = dash.params().fluxo || 'Exportação';
+  const cor = fluxo === 'Exportação' ? OC.C(2) : OC.C(1);
+  OC.hbarChart(el, {
+    label: 'Barras dos dez principais países no comércio de cacau',
+    items: rows.map((r) => ({ label: r.pais, values: { v: r.fob_usd_mi }, r })),
+    keys: [{ key: 'v', name: fluxo, color: cor }],
+    xFmt: (v) => OC.fmt(v, 'd1'),
+    tipLines: (it) => [['Valor FOB', 'US$ ' + OC.fmt(it.r.fob_usd_mi, 'd1') + ' mi'], ['Volume', OC.fmt(it.r.toneladas, 'int') + ' t'], ['Participação', OC.fmt(it.r.participacao_pct, 'p1')]]
+  });
+});
+
+/* ---------- Mercado ---------- */
+dash.draw('chart_preco', (el) => {
+  const s = OC.status(['preco_icco']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const moeda = dash.params().moeda || 'usd';
+  const campo = moeda === 'usd' ? 'usd_por_tonelada' : 'euro_por_tonelada';
+  const simb = moeda === 'usd' ? 'US$ ' : '€ ';
+  const MES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  const rows = OC.rows('preco_icco').map((r) => ({ x: new Date(r.data + 'T00:00:00Z'), y: r[campo] == null || r[campo] === '' ? null : +r[campo] })).sort((a, b) => a.x - b.x);
+  OC.lineChart(el, {
+    label: 'Linha do preço médio mensal do cacau na ICCO', time: true, legend: false, height: 300,
+    series: [{ name: moeda === 'usd' ? 'US$/t' : '€/t', color: OC.C(0), points: rows }],
+    xFmt: d3.utcFormat('%Y'),
+    yFmt: (v) => OC.fmt(v, 'int'), tipFmt: (v) => simb + OC.fmt(v, 'int') + '/t',
+    tipTitle: (t) => { const d = new Date(t); return MES[d.getUTCMonth()] + '/' + d.getUTCFullYear(); }
+  });
+});
+
+dash.draw('chart_moagem_global', (el) => {
+  const s = OC.status(['moagem_global']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('moagem_global').map((r, i) => ({ ...r, i }));
+  const lab = (i) => { const r = rows[i]; return r ? r.ano + ' T' + r.trimestre : ''; };
+  OC.lineChart(el, {
+    label: 'Linhas da moagem trimestral de cacau na Europa e na Ásia', zero: false,
+    series: [{ name: 'Europa (ECA)', color: OC.C(0), points: rows.map((r) => ({ x: r.i, y: r.europa_mil_t })) },
+             { name: 'Ásia (CAA)', color: OC.C(1), points: rows.map((r) => ({ x: r.i, y: r.asia_mil_t })) }],
+    xTicks: rows.filter((r) => r.trimestre === 1).map((r) => r.i),
+    xFmt: (i) => (rows[i] ? String(rows[i].ano) : ''),
+    yFmt: (v) => OC.fmt(v, 'int'), tipFmt: (v) => OC.fmt(v, 'd1') + ' mil t', tipTitle: lab
+  });
+});
+
+/* ---------- Crédito rural ---------- */
+dash.draw('chart_credito_uf', (el) => {
+  const s = OC.status(['credito_uf']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('credito_uf');
+  const fins = [['Investimento', OC.C(2)], ['Custeio', OC.C(1)], ['Comercialização', OC.C(0)], ['Industrialização', OC.C(3)]]
+    .filter(([k]) => rows.some((r) => r[k] > 0));
+  OC.hbarChart(el, {
+    label: 'Barras do crédito rural ao cacau por estado e finalidade',
+    items: rows.map((r) => ({ label: r.uf, values: Object.fromEntries(fins.map(([k]) => [k, r[k]])), r })),
+    keys: fins.map(([k, c]) => ({ key: k, name: k, color: c })),
+    xFmt: (v) => OC.fmt(v, 'd1'),
+    tipLines: (it) => fins.map(([k, c]) => [k, 'R$ ' + OC.fmt(it.r[k], 'd1') + ' mi', c]).concat([['Contratos', OC.fmt(it.r.contratos, 'int')]])
+  });
+});
+
+dash.draw('chart_credito_linha', (el) => {
+  const s = OC.status(['credito_linha']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('credito_linha').slice(0, 10);
+  OC.hbarChart(el, {
+    label: 'Barras do crédito rural ao cacau por programa e linha',
+    items: rows.map((r) => ({ label: r.linha, values: { v: r.valor_mi }, r })),
+    keys: [{ key: 'v', name: 'Valor', color: OC.C(2) }],
+    xFmt: (v) => OC.fmt(v, 'd1'),
+    tipLines: (it) => [['Valor', 'R$ ' + OC.fmt(it.r.valor_mi, 'd1') + ' mi'], ['Contratos', OC.fmt(it.r.contratos, 'int')], ['Área financiada', OC.fmt(it.r.area_ha, 'int') + ' ha']]
+  });
+});
+
+dash.draw('tab_credito_ifs', (el) => {
+  el.replaceChildren();
+  if (dash.data('credito_ifs').status !== 'ok') return;
+  OC.rows('credito_ifs').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.cnpj_if);
+    [[r.instituicao, ''], [r.segmento_if, 'oc-muted'], [OC.fmt(r.valor_mi, 'd1'), 'r'], [OC.fmt(r.contratos, 'int'), 'r']].forEach(([t, c]) => {
+      const td = document.createElement('td'); td.textContent = t; if (c) td.className = c; tr.append(td);
+    });
+    el.append(tr);
+  });
+});
+
+/* ---------- Tendências ---------- */
+dash.draw('t_manchete', (el) => {
+  const d = dash.data('tendencias_leitura');
+  if (d.status !== 'ok') { el.textContent = '—'; el.classList.toggle('dash-skeleton', d.status === 'loading'); return; }
+  el.classList.remove('dash-skeleton');
+  const r = d.data.find((x) => x.tipo === 'manchete');
+  el.textContent = r ? r.texto : '—';
+});
+
+dash.draw('t_fatores', (el) => {
+  el.replaceChildren();
+  const d = dash.data('tendencias_leitura');
+  if (d.status !== 'ok') return;
+  const tipo = el.getAttribute('data-tipo');
+  const cor = tipo === 'altista' ? OC.C(1) : OC.C(0);
+  d.data.filter((r) => r.tipo === tipo).sort((a, b) => a.ordem - b.ordem).forEach((r) => {
+    const li = document.createElement('li'); li.setAttribute('data-key', r.id);
+    const dot = document.createElement('i'); dot.style.background = cor;
+    const p = document.createElement('span'); p.setAttribute('data-field', 'texto'); p.textContent = r.texto + ' ';
+    li.append(dot, p);
+    if (r.fonte) {
+      const s = document.createElement('small');
+      if (r.url) { const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = r.fonte; s.append(a); }
+      else s.textContent = r.fonte;
+      li.append(s);
+    }
+    el.append(li);
+  });
+});
+
+dash.draw('chart_aipc_tri', (el) => {
+  const s = OC.status(['aipc_trimestral']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('aipc_trimestral');
+  const anos = [...new Set(rows.map((r) => r.ano))].sort();
+  const cores = ['var(--cds-chart-muted)', OC.C(1), OC.C(2)];
+  const get = (t, a) => { const r = rows.find((x) => x.ano === +a && x.trimestre === t); return r ? r.recebimento_t / 1000 : null; };
+  OC.barChart(el, {
+    label: 'Barras do recebimento trimestral de amêndoas pela indústria brasileira, por ano',
+    cats: [1, 2, 3, 4], catFmt: (t) => t + 'º tri',
+    keys: anos.map((a, i) => ({ key: String(a), name: String(a), color: cores[i % cores.length] })),
+    get: (t, a) => get(t, a) || 0,
+    yFmt: (v) => OC.fmt(v, 'int'),
+    tipTitle: (t) => t + 'º trimestre',
+    tipLines: (t) => anos.map((a, i) => [String(a), get(t, a) == null ? 'sem dado' : OC.fmt(get(t, a), 'd1') + ' mil t', cores[i % cores.length]])
+  });
+});
+
+dash.draw('chart_enso', (el) => {
+  const s = OC.status(['enso_probabilidades']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const rows = OC.rows('enso_probabilidades').slice().sort((a, b) => a.ordem - b.ordem);
+  const keys = [['la_nina_pct', 'La Niña', OC.C(7)], ['neutro_pct', 'Neutro', 'var(--cds-chart-muted)'], ['fraco_pct', 'El Niño fraco', OC.C(1)],
+    ['moderado_pct', 'Moderado', OC.C(6)], ['forte_pct', 'Forte', OC.C(0)], ['muito_forte_pct', 'Muito forte', OC.C(3)]];
+  OC.barChart(el, {
+    label: 'Barras empilhadas da probabilidade de El Niño por intensidade e trimestre móvel', stacked: true, height: 300,
+    cats: rows.map((r) => r.meses),
+    keys: keys.map(([k, n, c]) => ({ key: k, name: n, color: c })),
+    get: (c, k) => (rows.find((r) => r.meses === c) || {})[k] || 0,
+    yFmt: (v) => OC.fmt(v, 'int') + '%',
+    tipLines: (c) => { const r = rows.find((x) => x.meses === c); return keys.filter(([k]) => r[k] > 0).map(([k, n, col]) => [n, r[k] + '%', col]); }
+  });
+});
+
+function ocCell(tr, text, cls, url) {
+  const td = document.createElement('td');
+  if (url) { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; td.append(a); }
+  else td.textContent = text;
+  if (cls) td.className = cls;
+  tr.append(td);
+}
+
+dash.draw('tab_civ', (el) => {
+  el.replaceChildren();
+  if (dash.data('civ_chegadas').status !== 'ok') return;
+  OC.rows('civ_chegadas').slice().sort((a, b) => (a.data_ref < b.data_ref ? 1 : -1)).forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.id);
+    ocCell(tr, OC.fmt(r.data_ref, 'dm'), '', r.url); ocCell(tr, r.medida, 'oc-muted');
+    ocCell(tr, OC.fmt(r.safra_2026_27_t, 'int'), 'r'); ocCell(tr, OC.fmt(r.safra_2025_26_t, 'int'), 'r'); ocCell(tr, OC.fmt(r.var_pct, 'pct'), 'r');
+    el.append(tr);
+  });
+});
+
+dash.draw('tab_estimativas', (el) => {
+  el.replaceChildren();
+  if (dash.data('estimativas_safra').status !== 'ok') return;
+  OC.rows('estimativas_safra').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.pais);
+    ocCell(tr, r.pais); ocCell(tr, OC.fmt(r.safra_2025_26_mil_t, 'int'), 'r');
+    ocCell(tr, OC.fmt(r.est_2026_27_min_mil_t, 'int'), 'r'); ocCell(tr, OC.fmt(r.est_2026_27_max_mil_t, 'int'), 'r');
+    ocCell(tr, r.quem_estima, 'oc-muted', r.url);
+    el.append(tr);
+  });
+});
+
+dash.draw('tab_precos_prod', (el) => {
+  el.replaceChildren();
+  if (dash.data('precos_produtor').status !== 'ok') return;
+  OC.rows('precos_produtor').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.pais);
+    ocCell(tr, r.pais, '', r.url); ocCell(tr, OC.fmt(r.preco, 'int'), 'r'); ocCell(tr, OC.fmt(r.anterior, 'int'), 'r');
+    ocCell(tr, OC.fmt(r.var_pct, 'pct'), 'r'); ocCell(tr, r.unidade + ' (antes: ' + r.anterior_ref + ')', 'oc-muted');
+    el.append(tr);
+  });
+});
+
+dash.draw('tab_balanco', (el) => {
+  el.replaceChildren();
+  if (dash.data('balanco_projecoes').status !== 'ok') return;
+  OC.rows('balanco_projecoes').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.id); tr.title = r.nota || '';
+    ocCell(tr, r.quem, 'oc-muted', r.url); ocCell(tr, r.safra); ocCell(tr, r.indicador);
+    ocCell(tr, (r.valor > 0 && r.indicador === 'Saldo global' ? '+' : r.valor < 0 ? '−' : '') + OC.fmt(Math.abs(r.valor), 'int') + ' ' + r.unidade, 'r');
+    el.append(tr);
+  });
+});
+
+/* ---------- Mapa da produção municipal ---------- */
+dash.draw('mapa_producao', (el) => {
+  const s = OC.status(['producao_municipal', 'malha_municipios', 'malha_ufs']);
+  if (s !== 'ok') return OC.placeholder(el, s);
+  const prod = new Map(OC.rows('producao_municipal').map((r) => [String(r.cod_ibge), r]));
+  const mun = OC.rows('malha_municipios'), ufs = OC.rows('malha_ufs');
+  const { metrica_mun: met = 'toneladas', uf_mun: uf = 'BR' } = dash.params();
+  const UF = { 11: 'RO', 12: 'AC', 13: 'AM', 14: 'RR', 15: 'PA', 16: 'AP', 17: 'TO', 21: 'MA', 22: 'PI', 23: 'CE', 24: 'RN', 25: 'PB', 26: 'PE', 27: 'AL', 28: 'SE', 29: 'BA', 31: 'MG', 32: 'ES', 33: 'RJ', 35: 'SP', 41: 'PR', 42: 'SC', 43: 'RS', 50: 'MS', 51: 'MT', 52: 'GO', 53: 'DF' };
+  const ufDe = (cod) => UF[String(cod).slice(0, 2)];
+  const inScope = (cod) => uf === 'BR' || ufDe(cod) === uf;
+  const RAMP = ['#F3EBCB', '#E9D49C', '#D9B46F', '#CF8449', '#A8622F', '#856133', '#4A3424'];
+  const vals = [];
+  for (const [cod, r] of prod) if (inScope(cod) && +r[met] > 0) vals.push(+r[met]);
+  const k = Math.max(1, Math.min(RAMP.length, new Set(vals).size));
+  const colors = k === RAMP.length ? RAMP : d3.quantize(d3.interpolateRgbBasis(RAMP), k);
+  const scale = d3.scaleQuantile(vals.length ? vals : [0, 1], colors);
+  const unid = { toneladas: ' t', area_ha: ' ha', kg_ha: ' kg/ha', valor_mil_reais: '' }[met];
+  const fmtV = (v) => (met === 'valor_mil_reais' ? 'R$ ' + (v >= 1000 ? OC.fmt(v / 1000, 'd1') + ' mi' : OC.fmt(v, 'int') + ' mil') : OC.fmt(v, 'int') + unid);
+
+  el.replaceChildren(); el.classList.remove('dash-skeleton');
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', '0 0 1000 940').attr('role', 'img')
+    .attr('aria-label', 'Mapa coroplético dos municípios brasileiros pela produção de cacau em 2025');
+  const gM = svg.append('g'), gU = svg.append('g');
+  const empty = 'var(--color-border-line)';
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  gM.selectAll('path').data(mun).join('path').attr('class', 'oc-mun').attr('d', (d) => d.d)
+    .attr('fill', (d) => { const r = prod.get(String(d.cod_ibge)); return r && +r[met] > 0 ? scale(+r[met]) : empty; })
+    .style('opacity', (d) => (inScope(d.cod_ibge) ? 1 : 0.18))
+    .each(function (d) {
+      if (uf === 'BR' || !inScope(d.cod_ibge)) return;
+      const b = this.getBBox(); x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height);
+    });
+  gU.selectAll('path').data(ufs).join('path').attr('class', 'oc-uf').attr('d', (d) => d.d);
+  if (uf !== 'BR' && isFinite(x0)) {
+    const pad = Math.max(x1 - x0, y1 - y0) * 0.06;
+    svg.attr('viewBox', [x0 - pad, y0 - pad, x1 - x0 + 2 * pad, y1 - y0 + 2 * pad].join(' '));
+  }
+  const tip = OC.tooltip(el);
+  let hover = null;
+  svg.on('pointermove', (ev) => {
+    const t = ev.target;
+    if (hover && hover !== t) hover.classList.remove('is-hover');
+    if (!t || !t.classList || !t.classList.contains('oc-mun')) { tip.hide(); hover = null; return; }
+    hover = t; t.classList.add('is-hover'); t.parentNode.appendChild(t);
+    const cod = String(t.__data__.cod_ibge), r = prod.get(cod);
+    if (!r) { tip.show(ev, 'Município ' + cod + ' (' + ufDe(cod) + ')', [['Cacau', 'sem produção registrada']]); return; }
+    tip.show(ev, r.municipio + ' (' + r.uf + ')', [
+      ['Bioma', r.bioma_predominante || '—'],
+      ['Produção', OC.fmt(r.toneladas, 'int') + ' t'],
+      ['Área colhida', OC.fmt(r.area_ha, 'int') + ' ha'],
+      ['Produtividade', r.kg_ha == null ? '—' : OC.fmt(r.kg_ha, 'int') + ' kg/ha'],
+      ['Valor', 'R$ ' + (r.valor_mil_reais >= 1000 ? OC.fmt(r.valor_mil_reais / 1000, 'd1') + ' mi' : OC.fmt(r.valor_mil_reais, 'int') + ' mil')]
+    ]);
+  });
+  svg.on('pointerleave', () => { if (hover) hover.classList.remove('is-hover'); hover = null; tip.hide(); });
+  // legenda em faixas
+  const lg = document.createElement('div'); lg.className = 'oc-qlegend';
+  if (vals.length) {
+    const ext = d3.extent(vals), q = scale.quantiles(), bounds = [ext[0], ...q, ext[1]];
+    colors.forEach((c, i) => {
+      const st = document.createElement('div'); st.className = 'oc-qstep';
+      const sw = document.createElement('i'); sw.style.background = c;
+      const tx = document.createElement('span');
+      tx.textContent = i === 0 ? 'até ' + fmtV(bounds[1] ?? ext[1]) : i === colors.length - 1 ? 'acima de ' + fmtV(bounds[i]) : fmtV(bounds[i + 1]);
+      st.append(sw, tx); lg.append(st);
+    });
+  }
+  const no = document.createElement('div'); no.className = 'oc-qstep';
+  const sw = document.createElement('i'); sw.style.background = empty;
+  const tx = document.createElement('span'); tx.textContent = 'sem produção';
+  no.append(sw, tx); lg.append(no);
+  el.append(lg);
+});
+
+dash.draw('nota_kgha', (el) => {
+  el.textContent = (dash.params().metrica_mun === 'kg_ha') ? '; só municípios com 100 ha ou mais' : '';
+});
+
+dash.draw('tab_mun_prod', (el) => {
+  el.replaceChildren();
+  if (dash.data('producao_mun_top').status !== 'ok') return;
+  OC.rows('producao_mun_top').forEach((r) => {
+    const tr = document.createElement('tr'); tr.setAttribute('data-key', r.cod_ibge);
+    const v = r.indicador === 'valor_mil_reais' ? 'R$ ' + OC.fmt(r.valor_indicador, 'd1') + ' mi' : OC.fmt(r.valor_indicador, 'int');
+    ocCell(tr, r.municipio); ocCell(tr, r.uf, 'oc-muted'); ocCell(tr, v, 'r'); ocCell(tr, OC.fmt(r.participacao_pct, 'p1'), 'r');
+    el.append(tr);
+  });
+});
+
+/* ---------- Fontes ---------- */
+dash.draw('tab_fontes', (el) => {
+  el.replaceChildren();
+  if (dash.data('fontes').status !== 'ok') return;
+  const ordem = { 'Em uso no painel': 0, 'Sem dados ainda': 1, 'Mapeada, a avaliar': 2 };
+  OC.rows('fontes').slice().sort((a, b) => ordem[a.situacao_resumo] - ordem[b.situacao_resumo]).forEach((r) => {
+    const tr = document.createElement('tr');
+    const a = document.createElement('td'); a.textContent = r.fonte;
+    const b = document.createElement('td'); b.textContent = r.dados && !String(r.dados).startsWith('Quais dados') ? r.dados : '—'; b.className = 'oc-muted';
+    const c = document.createElement('td'); const tag = document.createElement('span'); tag.className = 'oc-tag' + (r.situacao_resumo === 'Em uso no painel' ? ' uso' : ''); tag.textContent = r.situacao_resumo; c.append(tag);
+    if (r.situacao) tr.title = r.situacao;
+    tr.append(a, b, c); el.append(tr);
+  });
+});
+</script>
+
+<script>
+/* ---------- Controles e navegação ---------- */
+(function () {
+  const sync = () => {
+    const p = dash.params();
+    document.querySelectorAll('select[data-param]').forEach((s) => { const k = s.getAttribute('data-param'); if (p[k] != null) s.value = p[k]; });
+  };
+  document.querySelectorAll('select[data-param]').forEach((s) => {
+    s.addEventListener('change', () => dash.setParams({ [s.getAttribute('data-param')]: s.value }));
+  });
+  dash.onData(sync);
+
+  const buttons = [...document.querySelectorAll('.oc-nav button[data-target]')];
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    const t = document.getElementById(b.getAttribute('data-target'));
+    const dd = t && t.querySelector('details.oc-dobra'); if (dd && !dd.open) dd.open = true;
+    if (t) { t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: no-preference)').matches ? 'smooth' : 'auto', block: 'start' }); dash.setLink(t.id); }
+  }));
+  const secs = buttons.map((b) => document.getElementById(b.getAttribute('data-target'))).filter(Boolean);
+  if ('IntersectionObserver' in window && secs.length) {
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach((e) => {
+        if (!e.isIntersecting) return;
+        buttons.forEach((b) => b.classList.toggle('is-active', b.getAttribute('data-target') === e.target.id));
+        dash.setLink(e.target.id);
+      });
+    }, { root: document, rootMargin: '-40% 0px -55% 0px' });
+    secs.forEach((s) => io.observe(s));
+  }
+  document.querySelectorAll('details.oc-dobra').forEach((d) => d.addEventListener('toggle', () => { if (d.open) window.dispatchEvent(new Event('resize')); }));
+  const h = (location.hash || '').slice(1);
+  if (h) { const t = document.getElementById(h); const dd = t && t.closest('details.oc-dobra'); if (dd) dd.open = true; if (t) setTimeout(() => t.scrollIntoView({ block: 'start' }), 300); }
+})();
+</script>
+
+</body>
+</html>
